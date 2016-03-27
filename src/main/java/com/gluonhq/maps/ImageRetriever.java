@@ -28,11 +28,15 @@
 package com.gluonhq.maps;
 
 import com.gluonhq.charm.down.common.PlatformFactory;
+import javafx.beans.property.ReadOnlyDoubleProperty;
+import javafx.concurrent.Task;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
@@ -41,33 +45,24 @@ import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.beans.property.ReadOnlyDoubleProperty;
-import javafx.concurrent.Task;
-import javafx.concurrent.Worker;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 
 /**
  *
  * @author johan
  */
-public class ImageRetriever {
+class ImageRetriever {
 
-    static String host = "http://tile.openstreetmap.org/";
-    static File cacheRoot;
-    static boolean hasFileCache = false;
-    static CacheThread cacheThread = null;
+    private static String host = "http://tile.openstreetmap.org/";
+    private static File cacheRoot;
+    private static boolean hasFileCache = false;
+    private static CacheThread cacheThread = null;
 
     static {
         try {
             File storageRoot = PlatformFactory.getPlatform().getPrivateStorage();
             cacheRoot = new File(storageRoot, ".gluonmaps");
             System.out.println("[JVDBG] cacheroot = " + cacheRoot);
-            if (!cacheRoot.isDirectory()) {
-                hasFileCache = cacheRoot.mkdirs();
-            } else {
-                hasFileCache = true;
-            }
+            hasFileCache = cacheRoot.isDirectory() || cacheRoot.mkdirs();
             if (hasFileCache) {
                 cacheThread = new CacheThread(cacheRoot.getPath());
                 cacheThread.start();
@@ -185,8 +180,6 @@ public class ImageRetriever {
                         fos.close();
                     }
                 }
-            } catch (MalformedURLException ex) {
-                Logger.getLogger(ImageRetriever.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IOException ex) {
                 Logger.getLogger(ImageRetriever.class.getName()).log(Level.SEVERE, null, ex);
             }

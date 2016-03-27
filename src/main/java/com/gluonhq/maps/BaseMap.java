@@ -50,7 +50,7 @@ import static java.lang.Math.floor;
  * The BaseMap provides the underlying maptiles.
  * On top of this, additional layers can be rendered.
  */
-public class BaseMap extends Group {
+class BaseMap extends Group {
 
     /**
      * When the zoom-factor is less than TIPPING below an integer, we will use
@@ -81,7 +81,6 @@ public class BaseMap extends Group {
     double x0, y0;
     private boolean dirty = true;
 
-    private final ChangeListener<Number> resizeListener = (o, oldValue, newValue) -> markDirty();
     private ChangeListener<Scene> sceneListener;
 
     public BaseMap() {
@@ -95,8 +94,10 @@ public class BaseMap extends Group {
         centerLat.addListener(o -> doSetCenter(centerLat.get(), centerLon.get()));
         centerLon.addListener(o -> doSetCenter(centerLat.get(), centerLon.get()));
 
+        ChangeListener<Number> resizeListener = (o, oldValue, newValue) -> markDirty();
         area.widthProperty().addListener(resizeListener);
         area.heightProperty().addListener(resizeListener);
+
         area.translateXProperty().bind(translateXProperty().multiply(-1));
         area.translateYProperty().bind(translateYProperty().multiply(-1));
 
@@ -265,7 +266,7 @@ public class BaseMap extends Group {
         return centerLat;
     }
 
-    private final void loadTiles() {
+    private void loadTiles() {
         if (DEBUG) {
             System.out.println("[JVDBG] loadTiles");
         }
@@ -405,22 +406,22 @@ public class BaseMap extends Group {
         }
     }
 
-    private void clearTiles() {
-
-        List<Node> toRemove = new ArrayList<>();
-        ObservableList<Node> children = this.getChildren();
-        for (Node child : children) {
-            if (child instanceof MapTile) {
-                toRemove.add(child);
-            }
-        }
-        getChildren().removeAll(children);
-
-        for (int i = 0; i < tiles.length; i++) {
-            tiles[i].clear();
-        }
-
-    }
+//    private void clearTiles() {
+//
+//        List<Node> toRemove = new ArrayList<>();
+//        ObservableList<Node> children = this.getChildren();
+//        for (Node child : children) {
+//            if (child instanceof MapTile) {
+//                toRemove.add(child);
+//            }
+//        }
+//        getChildren().removeAll(children);
+//
+//        for (int i = 0; i < tiles.length; i++) {
+//            tiles[i].clear();
+//        }
+//
+//    }
 
 
     private MapTile getCoveringTile(MapTile tile) {
