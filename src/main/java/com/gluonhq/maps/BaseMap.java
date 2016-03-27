@@ -28,24 +28,23 @@
 package com.gluonhq.maps;
 
 import com.sun.javafx.tk.Toolkit;
-import static java.lang.Math.ceil;
-import static java.lang.Math.floor;
-import java.lang.ref.SoftReference;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.shape.Rectangle;
+
+import java.lang.ref.SoftReference;
+import java.util.*;
+
+import static java.lang.Math.ceil;
+import static java.lang.Math.floor;
 
 /**
  *
@@ -83,6 +82,8 @@ public class BaseMap extends Group {
     double x0, y0;
     private boolean dirty = true;
 
+    private final ChangeListener resizeListener = (o, oldValue, newValue) -> markDirty();
+
     public BaseMap() {
         for (int i = 0; i < tiles.length; i++) {
             tiles[i] = new HashMap<>();
@@ -93,6 +94,19 @@ public class BaseMap extends Group {
                 -> nearestZoom = (Math.min((int) floor(t1.doubleValue() + TIPPING), MAX_ZOOM - 1)));
         centerLat.addListener(o -> doSetCenter(centerLat.get(), centerLon.get()));
         centerLon.addListener(o -> doSetCenter(centerLat.get(), centerLon.get()));
+
+        // update map properly on window resize
+        sceneProperty().addListener( (o,oldScene, newScene) -> {
+            if ( oldScene != null ) {
+                oldScene.widthProperty().removeListener(resizeListener);
+                oldScene.heightProperty().removeListener(resizeListener);
+            }
+            if ( newScene != null ) {
+                newScene.widthProperty().addListener(resizeListener);
+                newScene.heightProperty().addListener(resizeListener);
+            }
+        });
+
     }
 
     public void setCenter(double lat, double lon) {
@@ -112,8 +126,8 @@ public class BaseMap extends Group {
         double lat_rad = Math.PI * lat / 180;
         double id = n / 360. * (180 + lon);
         double jd = n * (1 - (Math.log(Math.tan(lat_rad) + 1 / Math.cos(lat_rad)) / Math.PI)) / 2;
-        double mex = (double) id * 256;
-        double mey = (double) jd * 256;
+        double mex = id * 256;
+        double mey = jd * 256;
         double ttx = mex - this.getScene().getWidth() / 2;
         double tty = mey - this.getScene().getHeight() / 2;
         setTranslateX(-1 * ttx);
@@ -224,8 +238,8 @@ public class BaseMap extends Group {
         double lat_rad = Math.PI * lat / 180;
         double id = n / 360. * (180 + lon);
         double jd = n * (1 - (Math.log(Math.tan(lat_rad) + 1 / Math.cos(lat_rad)) / Math.PI)) / 2;
-        double mex = (double) id * 256;
-        double mey = (double) jd * 256;
+        double mex = id * 256;
+        double mey = jd * 256;
         double ttx = mex - this.getScene().getWidth() / 2;
         double tty = mey - this.getScene().getHeight() / 2;
         double x = this.getTranslateX() + mex;

@@ -116,14 +116,14 @@ class MapTile extends Region {
 
     private void calculatePosition() {
         double currentZoom = baseMap.zoomProperty().get();
-        int visibleWindow = (int) floor(currentZoom + baseMap.TIPPING);
-        if ((visibleWindow == myZoom) || isCovering() || ((visibleWindow >= baseMap.MAX_ZOOM) && (myZoom == baseMap.MAX_ZOOM - 1))) {
+        int visibleWindow = (int) floor(currentZoom + BaseMap.TIPPING);
+        if ((visibleWindow == myZoom) || isCovering() || ((visibleWindow >= BaseMap.MAX_ZOOM) && (myZoom == BaseMap.MAX_ZOOM - 1))) {
             this.setVisible(true);
 
         } else {
             this.setVisible(false);
         }
-        if (baseMap.DEBUG) {
+        if (BaseMap.DEBUG) {
             System.out.println("visible tile " + this + "? " + this.isVisible() + (this.isVisible() ? " covering? " + isCovering() : ""));
         }
         double sf = Math.pow(2, currentZoom - myZoom);
