@@ -28,8 +28,6 @@
 package com.gluonhq.maps;
 
 import com.sun.javafx.tk.Toolkit;
-import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
@@ -38,6 +36,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.shape.Rectangle;
 
 import java.lang.ref.SoftReference;
@@ -78,11 +77,12 @@ public class BaseMap extends Group {
     private final DoubleProperty centerLon = new SimpleDoubleProperty();
     private final DoubleProperty centerLat = new SimpleDoubleProperty();
 
-    private InvalidationListener sceneListener;
+
     double x0, y0;
     private boolean dirty = true;
 
-    private final ChangeListener resizeListener = (o, oldValue, newValue) -> markDirty();
+    private final ChangeListener<Number> resizeListener = (o, oldValue, newValue) -> markDirty();
+    private ChangeListener<Scene> sceneListener;
 
     public BaseMap() {
         for (int i = 0; i < tiles.length; i++) {
@@ -95,17 +95,26 @@ public class BaseMap extends Group {
         centerLat.addListener(o -> doSetCenter(centerLat.get(), centerLon.get()));
         centerLon.addListener(o -> doSetCenter(centerLat.get(), centerLon.get()));
 
-        // update map properly on window resize
-        sceneProperty().addListener( (o,oldScene, newScene) -> {
-            if ( oldScene != null ) {
-                oldScene.widthProperty().removeListener(resizeListener);
-                oldScene.heightProperty().removeListener(resizeListener);
-            }
-            if ( newScene != null ) {
-                newScene.widthProperty().addListener(resizeListener);
-                newScene.heightProperty().addListener(resizeListener);
-            }
-        });
+        area.widthProperty().addListener(resizeListener);
+        area.heightProperty().addListener(resizeListener);
+        area.translateXProperty().bind(translateXProperty().multiply(-1));
+        area.translateYProperty().bind(translateYProperty().multiply(-1));
+
+        if (sceneListener == null) {
+            sceneListener = (o, oldScene, newScene) -> {
+                    if (newScene != null) {
+                        //TODO Do we need to unbind from previous scene?
+                        area.widthProperty().bind(getScene().widthProperty().add(20));
+                        area.heightProperty().bind(getScene().heightProperty().add(20));
+                        markDirty();
+                    }
+                    if (abortedTileLoad) {
+                        abortedTileLoad = false;
+                        doSetCenter(lat, lon);
+                    }
+            };
+        }
+        this.sceneProperty().addListener(sceneListener);
 
     }
 
@@ -413,28 +422,6 @@ public class BaseMap extends Group {
 
     }
 
-    public void install() {
-        area.translateXProperty().bind(translateXProperty().multiply(-1));
-        area.translateYProperty().bind(translateYProperty().multiply(-1));
-        if (sceneListener == null) {
-            sceneListener = new InvalidationListener() {
-                @Override
-                public void invalidated(Observable observable) {
-                    if (getScene() != null) {
-                        area.widthProperty().bind(getScene().widthProperty().add(20));
-                        area.heightProperty().bind(getScene().heightProperty().add(20));
-                        markDirty();
-                    }
-                    if (abortedTileLoad) {
-                        abortedTileLoad = false;
-                        doSetCenter(lat, lon);
-                    }
-                }
-            };
-        }
-        this.sceneProperty().addListener(sceneListener);
-        markDirty();
-    }
 
     private MapTile getCoveringTile(MapTile tile) {
         int z = tile.myZoom;

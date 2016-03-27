@@ -50,7 +50,6 @@ public class MapView extends Region {
 
     public MapView() {
         baseMap = new BaseMap();
-        baseMap.install();
         getChildren().add(baseMap);
 
         setOnMousePressed(t -> {
