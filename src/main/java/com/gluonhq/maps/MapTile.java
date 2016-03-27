@@ -27,19 +27,18 @@
  */
 package com.gluonhq.maps;
 
+import static java.lang.Math.floor;
+import java.util.LinkedList;
+import java.util.List;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.WeakInvalidationListener;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Region;
 import javafx.scene.transform.Scale;
-
-import java.util.LinkedList;
-import java.util.List;
-
-import static java.lang.Math.floor;
 
 /**
  *
@@ -50,20 +49,21 @@ class MapTile extends Region {
     final int myZoom;
     final long i, j;
     String host = "http://tile.openstreetmap.org/";
-    private final BaseMap baseMap;
+    final BaseMap baseMap;
     // a list of tiles that this tile is covering. In case the covered tiles are 
     // not yet loaded, this tile will be rendered.
-    private final List<MapTile> coveredTiles = new LinkedList<MapTile>();
+    final List<MapTile> coveredTiles = new LinkedList();
     /**
      * In most cases, a tile will be shown scaled. The value for the scale
      * factor depends on the active zoom and the tile-specific myZoom
      */
-    private final Scale scale = new Scale();
+    final Scale scale = new Scale();
 
     public boolean isCovering() {
         return coveredTiles.size() > 0;
     }
 
+    private final InvalidationListener zl;
     private ReadOnlyDoubleProperty progress;
 
     // final Image image;
@@ -83,7 +83,7 @@ class MapTile extends Region {
 
         Label l = new Label("Tile [" + myZoom + "], i = " + i + ", j = " + j);
         getChildren().addAll(iv);//,l);
-        InvalidationListener zl = recalculate();
+        zl = recalculate();
         this.progress.addListener(o -> {
             if (this.progress.get() == 1.) {
                 debug("[JVDBG] got image  [" + myZoom + "], i = " + i + ", j = " + j);
@@ -151,7 +151,7 @@ class MapTile extends Region {
         calculatePosition();
     }
 
-    private InvalidationListener createProgressListener(MapTile child) {
+    InvalidationListener createProgressListener(MapTile child) {
         return new InvalidationListener() {
             @Override
             public void invalidated(Observable o) {
@@ -163,7 +163,7 @@ class MapTile extends Region {
         };
     }
 
-    private void debug(String s) {
+    public void debug(String s) {
         if (BaseMap.DEBUG) System.out.println("LOG " + System.currentTimeMillis() % 10000 + ": " + s);
     }
 }
