@@ -41,6 +41,7 @@ import javafx.scene.shape.Rectangle;
 
 import java.lang.ref.SoftReference;
 import java.util.*;
+import java.util.logging.Logger;
 
 import static java.lang.Math.ceil;
 import static java.lang.Math.floor;
@@ -51,6 +52,8 @@ import static java.lang.Math.floor;
  * On top of this, additional layers can be rendered.
  */
 public class BaseMap extends Group {
+
+    private static final Logger logger = Logger.getLogger( BaseMap.class.getName() );
 
     /**
      * When the zoom-factor is less than TIPPING below an integer, we will use
@@ -72,7 +75,7 @@ public class BaseMap extends Group {
     private double lon;
     private boolean abortedTileLoad;
 
-    static final boolean DEBUG = false;
+//    static final boolean DEBUG = false;
     private final Rectangle area;
     private final DoubleProperty centerLon = new SimpleDoubleProperty();
     private final DoubleProperty centerLat = new SimpleDoubleProperty();
@@ -141,9 +144,7 @@ public class BaseMap extends Group {
         double tty = mey - this.getScene().getHeight() / 2;
         setTranslateX(-1 * ttx);
         setTranslateY(-1 * tty);
-        if (DEBUG) {
-            System.out.println("setCenter, tx = " + this.getTranslateX() + ", with = " + this.getScene().getWidth() / 2 + ", mex = " + mex);
-        }
+        logger.config("setCenter, tx = " + this.getTranslateX() + ", with = " + this.getScene().getWidth() / 2 + ", mex = " + mex);
         markDirty();
     }
 
@@ -167,9 +168,7 @@ public class BaseMap extends Group {
     public void moveY(double dy) {
         double zoom = zoomProperty.get();
         double maxty = 256 * Math.pow(2, zoom) - this.getScene().getHeight();
-        if (DEBUG) {
-            System.out.println("ty = " + getTranslateY() + " and dy = " + dy);
-        }
+        logger.config("ty = " + getTranslateY() + " and dy = " + dy);
         if (getTranslateY() <= 0) {
             if (getTranslateY() + maxty >= 0) {
                 setTranslateY(Math.min(0, getTranslateY() - dy));
@@ -183,9 +182,7 @@ public class BaseMap extends Group {
     }
 
     public void setZoom(double z) {
-        if (DEBUG) {
-            System.out.println("setZoom called");
-        }
+        logger.fine("setZoom called");
         zoomProperty.set(z);
         doSetCenter(this.lat, this.lon);
     }
@@ -193,9 +190,7 @@ public class BaseMap extends Group {
     void zoom(double delta, double pivotX, double pivotY) {
         double dz = delta;// > 0 ? .1 : -.1;
         double zp = zoomProperty.get();
-        if (DEBUG) {
-            System.out.println("Zoom called, zp = " + zp + ", delta = " + delta + ", px = " + pivotX + ", py = " + pivotY);
-        }
+        logger.fine("Zoom called, zp = " + zp + ", delta = " + delta + ", px = " + pivotX + ", py = " + pivotY);
         double txold = getTranslateX();
         double t1x = pivotX - getTranslateX();
         double t2x = 1. - Math.pow(2, dz);
@@ -204,9 +199,7 @@ public class BaseMap extends Group {
         double t1y = pivotY - tyold;
         double t2y = 1. - Math.pow(2, dz);
         double totY = t1y * t2y;
-        if (DEBUG) {
-            System.out.println("zp = " + zp + ", txold = " + txold + ", totx = " + totX + ", tyold = " + tyold + ", toty = " + totY);
-        }
+        logger.fine("zp = " + zp + ", txold = " + txold + ", totx = " + totX + ", tyold = " + tyold + ", toty = " + totY);
         if ((delta > 0)) {
             if (zp < MAX_ZOOM) {
                 setTranslateX(txold + totX);
@@ -226,9 +219,7 @@ public class BaseMap extends Group {
                 System.out.println("sorry, would be too small");
             }
         }
-        if (DEBUG) {
-            System.out.println("after, zp = " + zoomProperty.get() + ", tx = " + getTranslateX());
-        }
+        logger.fine("after, zp = " + zoomProperty.get() + ", tx = " + getTranslateX());
     }
 
     public DoubleProperty zoomProperty() {
@@ -266,13 +257,9 @@ public class BaseMap extends Group {
     }
 
     private final void loadTiles() {
-        if (DEBUG) {
-            System.out.println("[JVDBG] loadTiles");
-        }
+        logger.fine("[JVDBG] loadTiles");
         if (getScene() == null) {
-            if (DEBUG) {
-                System.out.println("[JVDBG] can't load tiles, scene null");
-            }
+            logger.fine("[JVDBG] can't load tiles, scene null");
             return;
         }
         double activeZoom = zoomProperty.get();
@@ -287,9 +274,7 @@ public class BaseMap extends Group {
         long jmin = Math.max(0, (long) (-ty * Math.pow(2, deltaZ) / 256));
         long imax = Math.min(i_max, imin + (long) (width * Math.pow(2, deltaZ) / 256) + 3);
         long jmax = Math.min(j_max, jmin + (long) (height * Math.pow(2, deltaZ) / 256) + 3);
-        if (DEBUG) {
-            System.out.println("Zoom = " + nearestZoom + ", active = " + activeZoom + ", tx = " + tx + ", loadtiles, check i-range: " + imin + ", " + imax + " and j-range: " + jmin + ", " + jmax);
-        }
+        logger.fine("Zoom = " + nearestZoom + ", active = " + activeZoom + ", tx = " + tx + ", loadtiles, check i-range: " + imin + ", " + imax + " and j-range: " + jmin + ", " + jmax);
         for (long i = imin; i < imax; i++) {
             for (long j = jmin; j < jmax; j++) {
                 Long key = i * i_max + j;
@@ -359,9 +344,7 @@ public class BaseMap extends Group {
     }
 
     private void cleanupTiles() {
-        if (DEBUG) {
-            System.out.println("START CLEANUP, zp = " + zoomProperty.get());
-        }
+        logger.fine("START CLEANUP, zp = " + zoomProperty.get());
         double zp = zoomProperty.get();
         List<MapTile> toRemove = new LinkedList<>();
         Parent parent = this.getParent();
@@ -370,29 +353,19 @@ public class BaseMap extends Group {
             if (child instanceof MapTile) {
                 MapTile tile = (MapTile) child;
                 boolean intersects = tile.getBoundsInParent().intersects(area.getBoundsInParent());
-                if (DEBUG) {
-                    System.out.println("evaluate tile " + tile + ", is = " + intersects + ", tzoom = " + tile.getZoomLevel());
-                }
+                logger.fine("evaluate tile " + tile + ", is = " + intersects + ", tzoom = " + tile.getZoomLevel());
                 if (!intersects) {
-                    if (DEBUG) {
-                        System.out.println("not shown");
-                    }
+                    logger.fine("not shown");
                     boolean loading = tile.loading();
-                    if (DEBUG) {
-                        System.out.println("Reap " + tile + " loading? " + loading);
-                    }
+                    logger.fine("Reap " + tile + " loading? " + loading);
                     if (!loading) {
                         toRemove.add(tile);
                     }
                 } else if (tile.getZoomLevel() > ceil(zp)) {
-                    if (DEBUG) {
-                        System.out.println("too detailed");
-                    }
+                    logger.fine("too detailed");
                     toRemove.add(tile);
                 } else if ((tile.getZoomLevel() < floor(zp + TIPPING)) && (!tile.isCovering()) && (!(ceil(zp) >= MAX_ZOOM))) {
-                    if (DEBUG) {
-                        System.out.println("not enough detailed");
-                    }
+                    logger.fine("not enough detailed");
                     toRemove.add(tile);
                 }
             }
@@ -400,9 +373,7 @@ public class BaseMap extends Group {
 
         getChildren().removeAll(toRemove);
 
-        if (DEBUG) {
-            System.out.println("DONE CLEANUP, #children = " + getChildren().size());
-        }
+        logger.fine("DONE CLEANUP, #children = " + getChildren().size());
     }
 
     private void clearTiles() {
@@ -433,12 +404,10 @@ public class BaseMap extends Group {
             // LongTuple it = new LongTuple(i,j);
             SoftReference<MapTile> ref = tiles[z - 1].get(key);
             if (ref != null) {
-                if (DEBUG) {
-                    System.out.println("[JVDBG] COVERING TILE FOUND!");
-                }
+                logger.fine("[JVDBG] COVERING TILE FOUND!");
                 return ref.get();
-            } else if (DEBUG) {
-                System.out.println("not tile found for " + z + ", " + pi + ", " + pj);
+            } else {
+                logger.fine("not tile found for " + z + ", " + pi + ", " + pj);
             }
         }
         return null;

@@ -34,15 +34,27 @@ import javafx.scene.Scene;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
+import java.io.IOException;
+import java.util.logging.LogManager;
+
 /**
  *
  * Demo class showing a simple map app
  */
 public class DemoMap extends Application {
 
+    static {
+        try {
+            LogManager.getLogManager().readConfiguration( DemoMap.class.getResourceAsStream("/logging.properties") );
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void start(Stage stage) throws Exception {
-        MapView view = new MapView();   
+
+        MapView view = new MapView();
         view.setZoom(11); 
         Scene scene;
         if (JavaFXPlatform.isDesktop()) {

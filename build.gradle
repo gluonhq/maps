@@ -8,6 +8,7 @@ buildscript {
 }
 
 apply plugin: 'org.javafxports.jfxmobile'
+apply plugin: 'application'
 
 repositories {
     jcenter()
@@ -21,6 +22,10 @@ dependencies {
 }
 
 mainClassName = 'com.gluonhq.maps.DemoMap'
+//run {
+//    System.setProperty('java.util.logging.config.file', 'logging.properties')
+//    applicationDefaultJvmArgs = ["-Djava.util.logging.config.file=/logging.properties"]
+//}
 
 jfxmobile {
     android {

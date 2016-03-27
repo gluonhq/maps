@@ -27,24 +27,28 @@
  */
 package com.gluonhq.maps;
 
-import static java.lang.Math.floor;
-import java.util.LinkedList;
-import java.util.List;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.WeakInvalidationListener;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Region;
 import javafx.scene.transform.Scale;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.logging.Logger;
+
+import static java.lang.Math.floor;
 
 /**
  *
  * @author johan
  */
 class MapTile extends Region {
+
+    private static final Logger logger = Logger.getLogger( MapTile.class.getName() );
 
     final int myZoom;
     final long i, j;
@@ -123,9 +127,7 @@ class MapTile extends Region {
         } else {
             this.setVisible(false);
         }
-        if (BaseMap.DEBUG) {
-            System.out.println("visible tile " + this + "? " + this.isVisible() + (this.isVisible() ? " covering? " + isCovering() : ""));
-        }
+        logger.fine("visible tile " + this + "? " + this.isVisible() + (this.isVisible() ? " covering? " + isCovering() : ""));
         double sf = Math.pow(2, currentZoom - myZoom);
         scale.setX(sf);
         scale.setY(sf);
@@ -164,6 +166,6 @@ class MapTile extends Region {
     }
 
     public void debug(String s) {
-        if (BaseMap.DEBUG) System.out.println("LOG " + System.currentTimeMillis() % 10000 + ": " + s);
+        logger.fine("LOG " + System.currentTimeMillis() % 10000 + ": " + s);
     }
 }
