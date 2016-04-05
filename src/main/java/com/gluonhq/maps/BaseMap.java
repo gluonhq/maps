@@ -121,6 +121,11 @@ public class BaseMap extends Group {
 
     }
 
+    /**
+     * Move the center of this map to the specified coordinates
+     * @param lat the latitude of the new center
+     * @param lon the longitude of the new center
+     */
     public void setCenter(double lat, double lon) {
         centerLat.set(lat);
         centerLon.set(lon);
@@ -181,6 +186,10 @@ public class BaseMap extends Group {
         markDirty();
     }
 
+    /**
+     * set the zoom level of the map to the specified value
+     * @param z the new zoom level
+     */
     public void setZoom(double z) {
         logger.fine("setZoom called");
         zoomProperty.set(z);
