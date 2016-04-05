@@ -27,48 +27,32 @@
  */
 package com.gluonhq.maps;
 
-import com.gluonhq.charm.down.common.JavaFXPlatform;
-import javafx.application.Application;
-import javafx.geometry.Rectangle2D;
-import javafx.scene.Scene;
-import javafx.stage.Screen;
-import javafx.stage.Stage;
-
-import java.io.IOException;
-import java.util.logging.LogManager;
+import javafx.scene.Parent;
 
 /**
  *
- * Demo class showing a simple map app
+ * @author johan
  */
-public class DemoMap extends Application {
-
-    static {
-        try {
-            LogManager.getLogManager().readConfiguration( DemoMap.class.getResourceAsStream("/logging.properties") );
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void start(Stage stage) throws Exception {
-
-        MapView view = new MapView();
-        view.setZoom(11); 
-        Scene scene;
-        if (JavaFXPlatform.isDesktop()) {
-            scene = new Scene(view, 600, 700);
-        } else {
-            Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
-            scene = new Scene (view, bounds.getWidth(), bounds.getHeight());
-        }
-        stage.setScene(scene);
-        stage.show();
-        MapPoint moscone = new MapPoint(37.7841772,-122.403751);
-        MapPoint sun = new MapPoint(37.396256,-121.953847);
-        view.setCenter(moscone);
-        view.flyTo(2., sun, 2.);
+public class MapLayer extends Parent {
+    
+    protected BaseMap baseMap;
+   
+    /**
+     * Only the MapView should call this method.
+     * We want implementations to access the BaseMap (since they need to be able
+     * to act on changes in center/zoom values) but they can not modify it.
+     * @param baseMap 
+     */
+    final void setBaseMap(BaseMap baseMap) {
+        this.baseMap = baseMap;
+        initialize();
     }
     
+    /** 
+     * This method is called by the framework when the MapLayer is created and added to the Map.
+     * At this point, it is safe to use the <code>baseMap</code> and its fields
+     */
+    public void initialize () {
+        
+    }
 }

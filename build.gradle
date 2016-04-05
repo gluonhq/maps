@@ -21,7 +21,7 @@ dependencies {
     iosRuntime 'com.gluonhq:charm-down-ios:2.0.0';
 }
 
-mainClassName = 'com.gluonhq.maps.DemoMap'
+mainClassName = 'com.gluonhq.maps.demo.DemoMap'
 //run {
 //    System.setProperty('java.util.logging.config.file', 'logging.properties')
 //    applicationDefaultJvmArgs = ["-Djava.util.logging.config.file=/logging.properties"]

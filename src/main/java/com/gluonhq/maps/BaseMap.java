@@ -85,7 +85,7 @@ public class BaseMap extends Group {
     private boolean dirty = true;
 
     private final ChangeListener<Number> resizeListener = (o, oldValue, newValue) -> markDirty();
-    private ChangeListener<Scene> sceneListener;
+    private ChangeListener<Scene> sceneListener;   
 
     public BaseMap() {
         for (int i = 0; i < tiles.length; i++) {
@@ -120,7 +120,7 @@ public class BaseMap extends Group {
         this.sceneProperty().addListener(sceneListener);
 
     }
-
+    
     /**
      * Move the center of this map to the specified coordinates
      * @param lat the latitude of the new center

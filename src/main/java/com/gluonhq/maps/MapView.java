@@ -28,6 +28,8 @@
 package com.gluonhq.maps;
 
 import com.gluonhq.charm.down.common.JavaFXPlatform;
+import java.util.LinkedList;
+import java.util.List;
 import javafx.animation.Animation.Status;
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
@@ -47,6 +49,7 @@ public class MapView extends Region {
 
     private final BaseMap baseMap;
     private Timeline t;
+    private List<MapLayer> layers = new LinkedList<>();
 
     public MapView() {
         baseMap = new BaseMap();
@@ -80,7 +83,18 @@ public class MapView extends Region {
     public void setCenter(double lat, double lon) {
         baseMap.setCenter(lat, lon);
     }
-
+  
+    public void addLayer (MapLayer child) {
+        child.setBaseMap(this.baseMap);
+        layers.add(child);
+        this.getChildren().add(child);
+    }
+    
+    public void removeLayer (MapLayer child) {
+        layers.remove(child);
+        this.getChildren().remove(child);
+    }
+    
     /**
      * Wait a bit, then move to the specified mapPoint in seconds time
      *
