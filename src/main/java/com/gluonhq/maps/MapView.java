@@ -43,7 +43,6 @@ import javafx.util.Duration;
  * This is the top UI element of the map component.
  * The center location and the zoom level of the map can be altered by input events (mouse/touch/gestures)
  * or by calling the methods setCenter and setZoom.
- * TODO: add layers back here.
  */
 public class MapView extends Region {
 
@@ -51,6 +50,9 @@ public class MapView extends Region {
     private Timeline t;
     private List<MapLayer> layers = new LinkedList<>();
 
+    /**
+     * Create a MapView component.
+     */
     public MapView() {
         baseMap = new BaseMap();
         getChildren().add(baseMap);
@@ -72,24 +74,48 @@ public class MapView extends Region {
 
     }
 
+    /**
+     * Request the map to set its zoom level to the specified value.
+     * The map considers this request, but it does not guarantee the zoom level
+     * will be set to the provided value
+     * @param zoom the requested zoom level
+     */
     public void setZoom(double zoom) {
         baseMap.setZoom(zoom);
     }
 
+    /** 
+     * Request the map to position itself around the specified center
+     * @param mapPoint 
+     */
     public void setCenter(MapPoint mapPoint) {
         setCenter(mapPoint.getLatitude(), mapPoint.getLongitude());
     }
 
+    /**
+     * Request the map to position itself around the specified center
+     * @param lat
+     * @param lon 
+     */
     public void setCenter(double lat, double lon) {
         baseMap.setCenter(lat, lon);
     }
   
+    /**
+     * Add a new layer on top of this map. Layers are displayed in order of 
+     * addition, with the last added layer to be on top
+     * @param child 
+     */
     public void addLayer (MapLayer child) {
         child.setBaseMap(this.baseMap);
         layers.add(child);
         this.getChildren().add(child);
     }
     
+    /**
+     * Removes the specified layer from the map
+     * @param child 
+     */
     public void removeLayer (MapLayer child) {
         layers.remove(child);
         this.getChildren().remove(child);
@@ -109,9 +135,9 @@ public class MapView extends Region {
         double currentLat = baseMap.centerLat().get();
         double currentLon = baseMap.centerLon().get();
         t = new Timeline(
-                new KeyFrame(Duration.ZERO, new KeyValue(baseMap.centerLat(), currentLat), new KeyValue(baseMap.centerLon(), currentLon)),
-                new KeyFrame(Duration.seconds(waitTime), new KeyValue(baseMap.centerLat(), currentLat), new KeyValue(baseMap.centerLon(), currentLon)),
-                new KeyFrame(Duration.seconds(waitTime + seconds), new KeyValue(baseMap.centerLat(), mapPoint.getLatitude()), new KeyValue(baseMap.centerLon(), mapPoint.getLongitude(), Interpolator.EASE_BOTH))
+                new KeyFrame(Duration.ZERO, new KeyValue(baseMap.prefCenterLat(), currentLat), new KeyValue(baseMap.prefCenterLon(), currentLon)),
+                new KeyFrame(Duration.seconds(waitTime), new KeyValue(baseMap.prefCenterLat(), currentLat), new KeyValue(baseMap.prefCenterLon(), currentLon)),
+                new KeyFrame(Duration.seconds(waitTime + seconds), new KeyValue(baseMap.prefCenterLat(), mapPoint.getLatitude()), new KeyValue(baseMap.prefCenterLon(), mapPoint.getLongitude(), Interpolator.EASE_BOTH))
         );
         t.play();
     }

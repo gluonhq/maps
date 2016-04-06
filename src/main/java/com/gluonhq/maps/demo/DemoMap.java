@@ -58,6 +58,7 @@ public class DemoMap extends Application {
     public void start(Stage stage) throws Exception {
 
         MapView view = new MapView();
+        view.addLayer(myDemoLayer());
         view.setZoom(11); 
         Scene scene;
         if (JavaFXPlatform.isDesktop()) {

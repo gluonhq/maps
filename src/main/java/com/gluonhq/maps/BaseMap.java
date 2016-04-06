@@ -45,6 +45,8 @@ import java.util.logging.Logger;
 
 import static java.lang.Math.ceil;
 import static java.lang.Math.floor;
+import javafx.beans.property.ReadOnlyDoubleProperty;
+import javafx.beans.property.ReadOnlyDoubleWrapper;
 
 /**
  *
@@ -67,18 +69,22 @@ public class BaseMap extends Group {
     public static final int MAX_ZOOM = 20;
     private final Map<Long, SoftReference<MapTile>>[] tiles = new HashMap[MAX_ZOOM];
 
-    private int nearestZoom;
-
-    private final DoubleProperty zoomProperty = new SimpleDoubleProperty();
-
     private double lat;
     private double lon;
     private boolean abortedTileLoad;
 
 //    static final boolean DEBUG = false;
     private final Rectangle area;
-    private final DoubleProperty centerLon = new SimpleDoubleProperty();
-    private final DoubleProperty centerLat = new SimpleDoubleProperty();
+    private final ReadOnlyDoubleWrapper centerLon = new ReadOnlyDoubleWrapper();
+    private final ReadOnlyDoubleWrapper centerLat = new ReadOnlyDoubleWrapper();
+    private final ReadOnlyDoubleWrapper zoom = new ReadOnlyDoubleWrapper();
+    
+    private final DoubleProperty prefCenterLon = new SimpleDoubleProperty();
+    private final DoubleProperty prefCenterLat = new SimpleDoubleProperty();
+    private final DoubleProperty prefZoom = new SimpleDoubleProperty();
+    
+    private double zoomValue;
+
 
 
     double x0, y0;
@@ -93,10 +99,10 @@ public class BaseMap extends Group {
         }
         area = new Rectangle(-10, -10, 810, 610);
         area.setVisible(false);
-        zoomProperty.addListener((ov, t, t1)
-                -> nearestZoom = (Math.min((int) floor(t1.doubleValue() + TIPPING), MAX_ZOOM - 1)));
-        centerLat.addListener(o -> doSetCenter(centerLat.get(), centerLon.get()));
-        centerLon.addListener(o -> doSetCenter(centerLat.get(), centerLon.get()));
+       
+        prefCenterLat.addListener(o -> doSetCenter(prefCenterLat.get(), prefCenterLon.get()));
+        prefCenterLon.addListener(o -> doSetCenter(prefCenterLat.get(), prefCenterLon.get()));
+        prefZoom.addListener(o -> doZoom(prefZoom.get()));
 
         area.widthProperty().addListener(resizeListener);
         area.heightProperty().addListener(resizeListener);
@@ -127,8 +133,8 @@ public class BaseMap extends Group {
      * @param lon the longitude of the new center
      */
     public void setCenter(double lat, double lon) {
-        centerLat.set(lat);
-        centerLon.set(lon);
+        prefCenterLat.set(lat);
+        prefCenterLon.set(lon);
     }
 
     private void doSetCenter(double lat, double lon) {
@@ -138,7 +144,7 @@ public class BaseMap extends Group {
             abortedTileLoad = true;
             return;
         }
-        double activeZoom = zoomProperty.get();
+        double activeZoom = zoom.get();
         double n = Math.pow(2, activeZoom);
         double lat_rad = Math.PI * lat / 180;
         double id = n / 360. * (180 + lon);
@@ -171,8 +177,8 @@ public class BaseMap extends Group {
      * @param dy the number of pixels
      */
     public void moveY(double dy) {
-        double zoom = zoomProperty.get();
-        double maxty = 256 * Math.pow(2, zoom) - this.getScene().getHeight();
+        double z = zoom.get();
+        double maxty = 256 * Math.pow(2, z) - this.getScene().getHeight();
         logger.config("ty = " + getTranslateY() + " and dy = " + dy);
         if (getTranslateY() <= 0) {
             if (getTranslateY() + maxty >= 0) {
@@ -192,13 +198,25 @@ public class BaseMap extends Group {
      */
     public void setZoom(double z) {
         logger.fine("setZoom called");
-        zoomProperty.set(z);
+        prefZoom.set(z);
+        
+    }
+    
+    private void doZoom(double z) {
+        zoom.set(z);
         doSetCenter(this.lat, this.lon);
+        markDirty();
     }
 
+    /**
+     * Only called internally when a zoom around a specific point is requested.
+     * @param delta
+     * @param pivotX
+     * @param pivotY 
+     */
     void zoom(double delta, double pivotX, double pivotY) {
         double dz = delta;// > 0 ? .1 : -.1;
-        double zp = zoomProperty.get();
+        double zp = zoom.get();
         logger.fine("Zoom called, zp = " + zp + ", delta = " + delta + ", px = " + pivotX + ", py = " + pivotY);
         double txold = getTranslateX();
         double t1x = pivotX - getTranslateX();
@@ -213,7 +231,7 @@ public class BaseMap extends Group {
             if (zp < MAX_ZOOM) {
                 setTranslateX(txold + totX);
                 setTranslateY(tyold + totY);
-                zoomProperty.set(zp + delta);
+                zoom.set(zp + delta);
                 markDirty();
             }
         } else if (zp > 1) {
@@ -222,21 +240,19 @@ public class BaseMap extends Group {
                 // also, we need to fit on the current screen
                 setTranslateX(txold + totX);
                 setTranslateY(tyold + totY);
-                zoomProperty.set(zp + delta);
+                zoom.set(zp + delta);
                 markDirty();
             } else {
                 System.out.println("sorry, would be too small");
             }
         }
-        logger.fine("after, zp = " + zoomProperty.get() + ", tx = " + getTranslateX());
+        logger.fine("after, zp = " + zoom.get() + ", tx = " + getTranslateX());
     }
 
-    public DoubleProperty zoomProperty() {
-        return zoomProperty;
-    }
+
 
     public Point2D getMapPoint(double lat, double lon) {
-        return getMapPoint(zoomProperty.get(), lat, lon);
+        return getMapPoint(zoom.get(), lat, lon);
     }
 
     private Point2D getMapPoint(double zoom, double lat, double lon) {
@@ -257,21 +273,34 @@ public class BaseMap extends Group {
         return answer;
     }
 
-    public DoubleProperty centerLon() {
-        return centerLon;
+    public ReadOnlyDoubleProperty centerLon() {
+        return centerLon.getReadOnlyProperty();
     }
 
-    public DoubleProperty centerLat() {
-        return centerLat;
+    public ReadOnlyDoubleProperty centerLat() {
+        return centerLat.getReadOnlyProperty();
     }
-
+    
+    public ReadOnlyDoubleProperty zoom() {
+        return zoom.getReadOnlyProperty();
+    }
+    
+    public DoubleProperty prefCenterLon() {
+        return prefCenterLon;
+    }
+    
+    public DoubleProperty prefCenterLat() {
+        return prefCenterLat;
+    }
+    
     private final void loadTiles() {
         logger.fine("[JVDBG] loadTiles");
         if (getScene() == null) {
             logger.fine("[JVDBG] can't load tiles, scene null");
             return;
         }
-        double activeZoom = zoomProperty.get();
+        int nearestZoom = (Math.min((int) floor(zoom.get() + TIPPING), MAX_ZOOM - 1));
+        double activeZoom = zoom.get();
         double deltaZ = nearestZoom - activeZoom;
         long i_max = 1 << nearestZoom;
         long j_max = 1 << nearestZoom;
@@ -353,8 +382,8 @@ public class BaseMap extends Group {
     }
 
     private void cleanupTiles() {
-        logger.fine("START CLEANUP, zp = " + zoomProperty.get());
-        double zp = zoomProperty.get();
+        logger.fine("START CLEANUP, zp = " + zoom.get());
+        double zp = zoom.get();
         List<MapTile> toRemove = new LinkedList<>();
         Parent parent = this.getParent();
         ObservableList<Node> children = this.getChildren();
@@ -435,7 +464,17 @@ public class BaseMap extends Group {
         }
         super.layoutChildren();
     }
-
+    
+    private void calculateCenterCoords() {
+        double x = ((MapView)this.getParent()).getWidth()/2-this.getTranslateX();
+        double y = ((MapView)this.getParent()).getHeight()/2 - this.getTranslateY();
+        double z = zoom.get();
+        double latrad = Math.PI - (2.0 * Math.PI * y) / (Math.pow(2, z)*256.);
+        double mlat = Math.toDegrees(Math.atan(Math.sinh(latrad)));
+        double mlon = x / (256*Math.pow(2, z)) * 360 - 180;
+        centerLon.set(mlon);
+        centerLat.set(mlat);
+    }
     /**
      * When something changes that would lead to a change in UI representation 
      * (e.g. map is dragged or zoomed), this method should be called.
@@ -445,6 +484,7 @@ public class BaseMap extends Group {
      */
     private void markDirty() {
         this.dirty = true;
+        calculateCenterCoords();
         this.setNeedsLayout(true);
         Toolkit.getToolkit().requestNextPulse();
     }

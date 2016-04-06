@@ -94,7 +94,7 @@ class MapTile extends Region {
                 this.setNeedsLayout(true);
             }
         });
-        baseMap.zoomProperty().addListener(new WeakInvalidationListener(zl));
+        baseMap.zoom().addListener(new WeakInvalidationListener(zl));
         baseMap.translateXProperty().addListener(new WeakInvalidationListener(zl));
         baseMap.translateYProperty().addListener(new WeakInvalidationListener(zl));
         calculatePosition();
@@ -119,7 +119,7 @@ class MapTile extends Region {
     }
 
     private void calculatePosition() {
-        double currentZoom = baseMap.zoomProperty().get();
+        double currentZoom = baseMap.zoom().get();
         int visibleWindow = (int) floor(currentZoom + BaseMap.TIPPING);
         if ((visibleWindow == myZoom) || isCovering() || ((visibleWindow >= BaseMap.MAX_ZOOM) && (myZoom == BaseMap.MAX_ZOOM - 1))) {
             this.setVisible(true);

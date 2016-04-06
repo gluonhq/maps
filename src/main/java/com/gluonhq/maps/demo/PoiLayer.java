@@ -47,15 +47,14 @@ public class PoiLayer extends MapLayer {
     private List<MapPoint> points = new LinkedList<>();
     private Map<MapPoint, Node> icons = new HashMap<>();
 
-    private boolean dirty = false;
 
     public PoiLayer() {
     }
 
     @Override
     public void initialize() {
-        baseMap.centerLat().addListener((o) -> dirty = true);
-        baseMap.centerLon().addListener((o) -> dirty = true);
+        baseMap.centerLat().addListener(o -> markDirty());
+        baseMap.centerLon().addListener(o -> markDirty());
     }
 
     public void addPoint(MapPoint p) {
@@ -63,22 +62,21 @@ public class PoiLayer extends MapLayer {
         Node icon = new Circle(10, Color.BLUE);
         icons.put(p, icon);
         this.getChildren().add(icon);
-        
     }
 
+    
     @Override
-    protected void layoutChildren() {
-        if (dirty) {
-            for (MapPoint point : points) {
+    protected void layoutLayer() {
+        for (MapPoint point : points) {
                 Point2D mapPoint = baseMap.getMapPoint(point.getLatitude(), point.getLongitude());
                 Node icon = icons.get(point);
                 icon.setVisible(true);
                 icon.setTranslateX(mapPoint.getX());
                 icon.setTranslateY(mapPoint.getY());
-            }
-        }
-        super.layoutChildren();
-        dirty = false;
+                // we need to get these values or we won't be notified on new changes
+                baseMap.centerLon().get();
+                baseMap.centerLat().get();
+            } 
     }
 
 }

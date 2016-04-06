@@ -30,29 +30,80 @@ package com.gluonhq.maps;
 import javafx.scene.Parent;
 
 /**
- *
- * @author johan
+ * A MapLayer can be added on top a BaseMap (which provides the map tiles).
+ * MapLayers contain specific functionality that is rendered by overriding the
+ * {@link #layoutLayer()} method.
+ * As the MapLayer has access to the {@link #baseMap} instance that renders
+ * the map tiles, it can listen for changes (center coordinates or zoom level)
+ * in this baseMap. 
+ * <p>
+ * For example, a MapLayer that wants to change the position of its content when
+ * the center of the map changes, can implement the {@link #initialize()} 
+ * method as follows:
+ * <pre>
+ * {@code
+ *  {@}Override
+ *  public void initialize() {
+ *      baseMap.centerLat().addListener(o -> markDirty());
+ *      baseMap.centerLon().addListener(o -> markDirty());
+ *  }
+ * }</pre>
  */
 public class MapLayer extends Parent {
-    
+
+    private boolean dirty = false;
+
     protected BaseMap baseMap;
-   
+
     /**
-     * Only the MapView should call this method.
-     * We want implementations to access the BaseMap (since they need to be able
-     * to act on changes in center/zoom values) but they can not modify it.
-     * @param baseMap 
+     * Only the MapView should call this method. We want implementations to
+     * access the BaseMap (since they need to be able to act on changes in
+     * center/zoom values) but they can not modify it.
+     *
+     * @param baseMap
      */
     final void setBaseMap(BaseMap baseMap) {
         this.baseMap = baseMap;
         initialize();
     }
-    
-    /** 
-     * This method is called by the framework when the MapLayer is created and added to the Map.
-     * At this point, it is safe to use the <code>baseMap</code> and its fields
+
+    /**
+     * This method is called by the framework when the MapLayer is created and
+     * added to the Map. At this point, it is safe to use the
+     * <code>baseMap</code> and its fields.
+     * The default implementation doesn't do anything. It is up to specific
+     * layers to add layer-specific initialization.
      */
-    public void initialize () {
-        
+    protected void initialize() {
     }
+
+    /**
+     * This method is called when a Pulse is running and it is detected that
+     * the layer should be redrawn, as a consequence of an earlier call to
+     * {@link #markDirty() }.
+     * The default implementation doesn't do anything. It is up to specific
+     * layers to add layer-specific rendering.
+     */
+    protected void layoutLayer() {
+    }
+
+    /**
+     * Layers should call this method whenever something happens that makes
+     * them need to recompute their UI values
+     */
+    protected void markDirty() {
+        dirty = true;
+        this.setNeedsLayout(true);
+    }
+
+    /** {@inheritDoc} */
+    @Override protected void layoutChildren() {
+        if (dirty) {
+            layoutLayer();
+        }
+        super.layoutChildren();
+        dirty = false;
+    }
+
+
 }
