@@ -57,9 +57,8 @@ public class PoiLayer extends MapLayer {
         baseMap.centerLon().addListener(o -> markDirty());
     }
 
-    public void addPoint(MapPoint p) {
+    public void addPoint(MapPoint p, Node icon) {
         points.add(p);
-        Node icon = new Circle(10, Color.BLUE);
         icons.put(p, icon);
         this.getChildren().add(icon);
     }

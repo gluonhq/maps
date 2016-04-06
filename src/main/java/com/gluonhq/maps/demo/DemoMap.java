@@ -39,6 +39,9 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.logging.LogManager;
+import javafx.scene.Node;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 
 /**
  *
@@ -77,7 +80,10 @@ public class DemoMap extends Application {
     
     private MapLayer myDemoLayer () {
         PoiLayer answer = new PoiLayer();
-        answer.addPoint(new MapPoint(52,4));
+        Node icon1 = new Circle(7, Color.BLUE);
+        answer.addPoint(new MapPoint(50.8458,4.724), icon1);
+        Node icon2 = new Circle(7, Color.GREEN);
+        answer.addPoint(new MapPoint(37.396256,-121.953847), icon2);
         return answer;
     }
     
