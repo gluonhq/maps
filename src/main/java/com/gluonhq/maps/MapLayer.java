@@ -38,7 +38,7 @@ import javafx.scene.Parent;
  * <li>The MapLayer {@link #layoutLayer() } method will be called by the MapView
  * in case the coordinates (center/zoom) are changed.
  * <li>When the content of the MapLayer implementation changes (e.g. a POI is
- * added or moved), it should call the {@link #markLayerDirty() } method.
+ * added or moved), it should call the {@link #markDirty() } method.
  * This will mark this layer dirty and request it to be recalculated in the next
  * Pulse.
  * <p>
@@ -47,7 +47,7 @@ import javafx.scene.Parent;
  */
 public class MapLayer extends Parent {
 
-    private boolean layerDirty = false;
+    private boolean dirty = false;
 
     protected BaseMap baseMap;
 
@@ -75,24 +75,24 @@ public class MapLayer extends Parent {
 
     /**
      * Implementations should call this function when the content of the data
-     * has changed. It will set the <code>layerDirty<code> flag, and it will
+     * has changed. It will set the <code>dirty<code> flag, and it will
      * request the layer to be reconsidered during the next pulse.
      */
-    protected void markLayerDirty() {
-        this.layerDirty = true;
+    protected void markDirty() {
+        this.dirty = true;
         this.requestLayout();
     }
 
     @Override
     protected void layoutChildren() {
-        if (layerDirty) {
+        if (dirty) {
             layoutLayer();
         }
     }
     /**
      * This method is called when a Pulse is running and it is detected that
      * the layer should be redrawn, as a consequence of an earlier call to
-     * {@link #markLayerDirty() } (which should happen in case the info in the
+     * {@link #markDirty() } (which should happen in case the info in the
      * specific layer has changed) or when the {@link com.gluonhq.maps.MapView}
      * has its dirty flag set to true (which happens when the map is moved/zoomed).
      * The default implementation doesn't do anything. It is up to specific
