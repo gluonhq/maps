@@ -33,21 +33,17 @@ import javafx.scene.Parent;
  * A MapLayer can be added on top a BaseMap (which provides the map tiles).
  * MapLayers contain specific functionality that is rendered by overriding the
  * {@link #layoutLayer()} method.
- * As the MapLayer has access to the {@link #baseMap} instance that renders
- * the map tiles, it can listen for changes (center coordinates or zoom level)
- * in this baseMap. 
  * <p>
- * For example, a MapLayer that wants to change the position of its content when
- * the center of the map changes, can implement the {@link #initialize()} 
- * method as follows:
- * <pre>
- * {@code
- *  {@}Override
- *  public void initialize() {
- *      baseMap.centerLat().addListener(o -> markDirty());
- *      baseMap.centerLon().addListener(o -> markDirty());
- *  }
- * }</pre>
+ * There are 2 reasons why the {@link #layoutLayer() } will be called:
+ * <li>The MapLayer {@link #layoutLayer() } method will be called by the MapView
+ * in case the coordinates (center/zoom) are changed.
+ * <li>When the content of the MapLayer implementation changes (e.g. a POI is
+ * added or moved), it should call the {@link #markLayerDirty() } method.
+ * This will mark this layer dirty and request it to be recalculated in the next
+ * Pulse.
+ * <p>
+ * The MapLayer has access to the {@link #baseMap} instance that renders
+ * the map tiles and it can use the methods provided by the {@link com.gluonhq.maps.BaseMap}
  */
 public class MapLayer extends Parent {
 
