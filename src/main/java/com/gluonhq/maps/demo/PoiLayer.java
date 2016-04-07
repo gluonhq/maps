@@ -42,21 +42,15 @@ import javafx.util.Pair;
 public class PoiLayer extends MapLayer {
 
 
-    private ObservableList<Pair<MapPoint, Node>> points = FXCollections.observableArrayList();
+    private final ObservableList<Pair<MapPoint, Node>> points = FXCollections.observableArrayList();
     
     public PoiLayer() {
-    }
-
-    @Override
-    public void initialize() {
-        baseMap.centerLat().addListener(o -> markDirty());
-        baseMap.centerLon().addListener(o -> markDirty());
     }
 
     public void addPoint(MapPoint p, Node icon) {
         points.add(new Pair(p, icon));
         this.getChildren().add(icon);
-        markDirty();
+        this.markLayerDirty();
     }
 
     @Override
@@ -68,9 +62,6 @@ public class PoiLayer extends MapLayer {
             icon.setVisible(true);
             icon.setTranslateX(mapPoint.getX());
             icon.setTranslateY(mapPoint.getY());
-            // we need to get these values or we won't be notified on new changes
-            baseMap.centerLon().get();
-            baseMap.centerLat().get();
         }
     }
 

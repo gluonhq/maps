@@ -51,7 +51,7 @@ import javafx.scene.Parent;
  */
 public class MapLayer extends Parent {
 
-    private boolean dirty = false;
+    private boolean layerDirty = false;
 
     protected BaseMap baseMap;
 
@@ -78,32 +78,31 @@ public class MapLayer extends Parent {
     }
 
     /**
+     * Implementations should call this function when the content of the data
+     * has changed. It will set the <code>layerDirty<code> flag, and it will
+     * request the layer to be reconsidered during the next pulse.
+     */
+    protected void markLayerDirty() {
+        this.layerDirty = true;
+        this.requestLayout();
+    }
+
+    @Override
+    protected void layoutChildren() {
+        if (layerDirty) {
+            layoutLayer();
+        }
+    }
+    /**
      * This method is called when a Pulse is running and it is detected that
      * the layer should be redrawn, as a consequence of an earlier call to
-     * {@link #markDirty() }.
+     * {@link #markLayerDirty() } (which should happen in case the info in the
+     * specific layer has changed) or when the {@link com.gluonhq.maps.MapView}
+     * has its dirty flag set to true (which happens when the map is moved/zoomed).
      * The default implementation doesn't do anything. It is up to specific
      * layers to add layer-specific rendering.
      */
     protected void layoutLayer() {
     }
-
-    /**
-     * Layers should call this method whenever something happens that makes
-     * them need to recompute their UI values
-     */
-    protected void markDirty() {
-        dirty = true;
-        this.setNeedsLayout(true);
-    }
-
-    /** {@inheritDoc} */
-    @Override protected void layoutChildren() {
-        if (dirty) {
-            layoutLayer();
-        }
-        super.layoutChildren();
-        dirty = false;
-    }
-
 
 }

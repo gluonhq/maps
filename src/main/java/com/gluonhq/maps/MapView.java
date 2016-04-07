@@ -40,15 +40,15 @@ import javafx.util.Duration;
 
 /**
  *
- * This is the top UI element of the map component.
- * The center location and the zoom level of the map can be altered by input events (mouse/touch/gestures)
+ * This is the top UI element of the map component. The center location and the
+ * zoom level of the map can be altered by input events (mouse/touch/gestures)
  * or by calling the methods setCenter and setZoom.
  */
 public class MapView extends Region {
 
     private final BaseMap baseMap;
     private Timeline t;
-    private List<MapLayer> layers = new LinkedList<>();
+    private final List<MapLayer> layers = new LinkedList<>();
 
     /**
      * Create a MapView component.
@@ -56,7 +56,13 @@ public class MapView extends Region {
     public MapView() {
         baseMap = new BaseMap();
         getChildren().add(baseMap);
+        registerInputListeners();
 
+        baseMap.centerLat().addListener(o -> markDirty());
+        baseMap.centerLon().addListener(o -> markDirty());
+    }
+
+    private void registerInputListeners() {
         setOnMousePressed(t -> {
             baseMap.x0 = t.getSceneX();
             baseMap.y0 = t.getSceneY();
@@ -67,26 +73,27 @@ public class MapView extends Region {
             baseMap.x0 = t.getSceneX();
             baseMap.y0 = t.getSceneY();
         });
-        setOnZoom(t -> baseMap.zoom( t.getZoomFactor()-1, (baseMap.x0 + t.getSceneX()) / 2.0, (baseMap.y0 + t.getSceneY()) / 2.0));
+        setOnZoom(t -> baseMap.zoom(t.getZoomFactor() - 1, (baseMap.x0 + t.getSceneX()) / 2.0, (baseMap.y0 + t.getSceneY()) / 2.0));
         if (JavaFXPlatform.isDesktop()) {
             setOnScroll(t -> baseMap.zoom(t.getDeltaY() > 1 ? .1 : -.1, t.getSceneX(), t.getSceneY()));
         }
-
     }
 
     /**
-     * Request the map to set its zoom level to the specified value.
-     * The map considers this request, but it does not guarantee the zoom level
-     * will be set to the provided value
+     * Request the map to set its zoom level to the specified value. The map
+     * considers this request, but it does not guarantee the zoom level will be
+     * set to the provided value
+     *
      * @param zoom the requested zoom level
      */
     public void setZoom(double zoom) {
         baseMap.setZoom(zoom);
     }
 
-    /** 
+    /**
      * Request the map to position itself around the specified center
-     * @param mapPoint 
+     *
+     * @param mapPoint
      */
     public void setCenter(MapPoint mapPoint) {
         setCenter(mapPoint.getLatitude(), mapPoint.getLongitude());
@@ -94,33 +101,36 @@ public class MapView extends Region {
 
     /**
      * Request the map to position itself around the specified center
+     *
      * @param lat
-     * @param lon 
+     * @param lon
      */
     public void setCenter(double lat, double lon) {
         baseMap.setCenter(lat, lon);
     }
-  
+
     /**
-     * Add a new layer on top of this map. Layers are displayed in order of 
+     * Add a new layer on top of this map. Layers are displayed in order of
      * addition, with the last added layer to be on top
-     * @param child 
+     *
+     * @param child
      */
-    public void addLayer (MapLayer child) {
+    public void addLayer(MapLayer child) {
         child.setBaseMap(this.baseMap);
         layers.add(child);
         this.getChildren().add(child);
     }
-    
+
     /**
      * Removes the specified layer from the map
-     * @param child 
+     *
+     * @param child
      */
-    public void removeLayer (MapLayer child) {
+    public void removeLayer(MapLayer child) {
         layers.remove(child);
         this.getChildren().remove(child);
     }
-    
+
     /**
      * Wait a bit, then move to the specified mapPoint in seconds time
      *
@@ -135,11 +145,35 @@ public class MapView extends Region {
         double currentLat = baseMap.centerLat().get();
         double currentLon = baseMap.centerLon().get();
         t = new Timeline(
-                new KeyFrame(Duration.ZERO, new KeyValue(baseMap.prefCenterLat(), currentLat), new KeyValue(baseMap.prefCenterLon(), currentLon)),
-                new KeyFrame(Duration.seconds(waitTime), new KeyValue(baseMap.prefCenterLat(), currentLat), new KeyValue(baseMap.prefCenterLon(), currentLon)),
-                new KeyFrame(Duration.seconds(waitTime + seconds), new KeyValue(baseMap.prefCenterLat(), mapPoint.getLatitude()), new KeyValue(baseMap.prefCenterLon(), mapPoint.getLongitude(), Interpolator.EASE_BOTH))
+            new KeyFrame(Duration.ZERO, new KeyValue(baseMap.prefCenterLat(), currentLat), new KeyValue(baseMap.prefCenterLon(), currentLon)),
+            new KeyFrame(Duration.seconds(waitTime), new KeyValue(baseMap.prefCenterLat(), currentLat), new KeyValue(baseMap.prefCenterLon(), currentLon)),
+            new KeyFrame(Duration.seconds(waitTime + seconds), new KeyValue(baseMap.prefCenterLat(), mapPoint.getLatitude()), new KeyValue(baseMap.prefCenterLon(), mapPoint.getLongitude(), Interpolator.EASE_BOTH))
         );
         t.play();
+    }
+
+    private boolean dirty = false;
+
+    protected void markDirty() {
+        dirty = true;
+        this.setNeedsLayout(true);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void layoutChildren() {
+        if (dirty) {
+            for (MapLayer layer : layers) {
+                layer.layoutLayer();
+            }
+        }
+        super.layoutChildren();
+        dirty = false;
+        // we need to get these values or we won't be notified on new changes
+            baseMap.centerLon().get();
+            baseMap.centerLat().get();
     }
 
 }
