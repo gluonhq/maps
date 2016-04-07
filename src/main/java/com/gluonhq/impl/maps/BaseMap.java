@@ -25,8 +25,9 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.gluonhq.maps;
+package com.gluonhq.impl.maps;
 
+import com.gluonhq.maps.MapView;
 import com.sun.javafx.tk.Toolkit;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -87,7 +88,7 @@ public class BaseMap extends Group {
 
 
 
-    double x0, y0;
+    public double x0, y0;
     private boolean dirty = true;
 
     private final ChangeListener<Number> resizeListener = (o, oldValue, newValue) -> markDirty();
@@ -214,7 +215,7 @@ public class BaseMap extends Group {
      * @param pivotX
      * @param pivotY 
      */
-    void zoom(double delta, double pivotX, double pivotY) {
+    public void zoom(double delta, double pivotX, double pivotY) {
         double dz = delta;// > 0 ? .1 : -.1;
         double zp = zoom.get();
         logger.fine("Zoom called, zp = " + zp + ", delta = " + delta + ", px = " + pivotX + ", py = " + pivotY);

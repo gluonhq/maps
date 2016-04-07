@@ -27,6 +27,7 @@
  */
 package com.gluonhq.maps;
 
+import com.gluonhq.impl.maps.BaseMap;
 import javafx.scene.Parent;
 
 /**
@@ -43,7 +44,7 @@ import javafx.scene.Parent;
  * Pulse.
  * <p>
  * The MapLayer has access to the {@link #baseMap} instance that renders
- * the map tiles and it can use the methods provided by the {@link com.gluonhq.maps.BaseMap}
+ * the map tiles and it can use the methods provided by the {@link BaseMap}
  */
 public class MapLayer extends Parent {
 

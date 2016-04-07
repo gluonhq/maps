@@ -30,6 +30,8 @@ package com.gluonhq.maps;
 import com.gluonhq.charm.down.common.JavaFXPlatform;
 import java.util.LinkedList;
 import java.util.List;
+
+import com.gluonhq.impl.maps.BaseMap;
 import javafx.animation.Animation.Status;
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;

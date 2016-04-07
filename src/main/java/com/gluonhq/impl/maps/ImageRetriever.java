@@ -25,7 +25,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.gluonhq.maps;
+package com.gluonhq.impl.maps;
 
 import com.gluonhq.charm.down.common.PlatformFactory;
 import javafx.beans.property.ReadOnlyDoubleProperty;
@@ -48,7 +48,6 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author johan
  */
 public class ImageRetriever {
 

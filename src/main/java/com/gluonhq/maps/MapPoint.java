@@ -29,7 +29,6 @@ package com.gluonhq.maps;
 
 /**
  *
- * @author johan
  */
 public class MapPoint {
 
