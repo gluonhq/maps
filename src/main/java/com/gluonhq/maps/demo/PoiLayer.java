@@ -29,25 +29,21 @@ package com.gluonhq.maps.demo;
 
 import com.gluonhq.maps.MapLayer;
 import com.gluonhq.maps.MapPoint;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
+import javafx.util.Pair;
 
 /**
  *
- * @author johan
+ * A layer that allows to visualise points of interest.
  */
 public class PoiLayer extends MapLayer {
 
-    private List<MapPoint> points = new LinkedList<>();
-    private Map<MapPoint, Node> icons = new HashMap<>();
 
-
+    private ObservableList<Pair<MapPoint, Node>> points = FXCollections.observableArrayList();
+    
     public PoiLayer() {
     }
 
@@ -58,24 +54,24 @@ public class PoiLayer extends MapLayer {
     }
 
     public void addPoint(MapPoint p, Node icon) {
-        points.add(p);
-        icons.put(p, icon);
+        points.add(new Pair(p, icon));
         this.getChildren().add(icon);
+        markDirty();
     }
 
-    
     @Override
     protected void layoutLayer() {
-        for (MapPoint point : points) {
-                Point2D mapPoint = baseMap.getMapPoint(point.getLatitude(), point.getLongitude());
-                Node icon = icons.get(point);
-                icon.setVisible(true);
-                icon.setTranslateX(mapPoint.getX());
-                icon.setTranslateY(mapPoint.getY());
-                // we need to get these values or we won't be notified on new changes
-                baseMap.centerLon().get();
-                baseMap.centerLat().get();
-            } 
+        for (Pair<MapPoint, Node> candidate : points) {
+            MapPoint point = candidate.getKey();
+            Node icon = candidate.getValue();
+            Point2D mapPoint = baseMap.getMapPoint(point.getLatitude(), point.getLongitude());
+            icon.setVisible(true);
+            icon.setTranslateX(mapPoint.getX());
+            icon.setTranslateY(mapPoint.getY());
+            // we need to get these values or we won't be notified on new changes
+            baseMap.centerLon().get();
+            baseMap.centerLat().get();
+        }
     }
 
 }
