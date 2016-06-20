@@ -50,5 +50,18 @@
                 <integer>1</integer>
                 <integer>2</integer>
         </array>
+        <key>NSAppTransportSecurity</key>
+        <dict>
+            <key>NSExceptionDomains</key>
+            <dict>
+                <key>tile.openstreetmap.org</key>
+                <dict>
+                    <key>NSIncludesSubdomains</key><true/>
+                    <key>NSExceptionAllowsInsecureHTTPLoads</key><true/>
+                    <key>NSExceptionRequiresForwardSecrecy</key><false/>
+                </dict>
+            </dict>
+        </dict>
+
 </dict>
 </plist>
