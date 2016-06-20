@@ -9,6 +9,15 @@ buildscript {
 
 apply plugin: 'org.javafxports.jfxmobile'
 apply plugin: 'application'
+apply plugin: 'maven'
+
+install {
+    repositories.mavenInstaller {
+        pom.version = '1.0.0'
+        pom.artifactId = 'gluon-maps'
+        pom.groupId = 'com.gluonhq'
+    }
+}
 
 repositories {
     jcenter()
