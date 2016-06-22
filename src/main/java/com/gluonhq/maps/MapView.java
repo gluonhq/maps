@@ -37,7 +37,6 @@ import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
-import javafx.geometry.Bounds;
 import javafx.scene.layout.Region;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
@@ -53,7 +52,7 @@ public class MapView extends Region {
     private final BaseMap baseMap;
     private Timeline t;
     private final List<MapLayer> layers = new LinkedList<>();
-    private  Rectangle clip;
+    private Rectangle clip;
 
     /**
      * Create a MapView component.
@@ -65,24 +64,10 @@ public class MapView extends Region {
 
         baseMap.centerLat().addListener(o -> markDirty());
         baseMap.centerLon().addListener(o -> markDirty());
-        clip = new Rectangle(0,0,100,100);
-        clip.setVisible(false);
-        this.layoutBoundsProperty().addListener(e -> {
-            clipMap();
-        });
-//      //  clipMap();
-      this.setClip(clip);
+        clip = new Rectangle();
+        this.setClip(clip);
     }
 
-    private void clipMap() {
-        Bounds layoutBounds = this.getLayoutBounds();
-        System.out.println("lb = "+layoutBounds);
-        clip.setWidth(layoutBounds.getWidth());
-        clip.setHeight(layoutBounds.getHeight());
-       // this.setClip(clip);
-
-    }
-    
     private void registerInputListeners() {
         setOnMousePressed(t -> {
             baseMap.x0 = t.getSceneX();
@@ -185,6 +170,9 @@ public class MapView extends Region {
      */
     @Override
     protected void layoutChildren() {
+        final double w = getWidth();
+        final double h = getHeight();
+
         if (dirty) {
             for (MapLayer layer : layers) {
                 layer.layoutLayer();
@@ -192,9 +180,13 @@ public class MapView extends Region {
         }
         super.layoutChildren();
         dirty = false;
-        // we need to get these values or we won't be notified on new changes
-            baseMap.centerLon().get();
-            baseMap.centerLat().get();
-    }
 
+        // we need to get these values or we won't be notified on new changes
+        baseMap.centerLon().get();
+        baseMap.centerLat().get();
+
+        // update clip
+        clip.setWidth(w);
+        clip.setHeight(h);
+    }
 }
