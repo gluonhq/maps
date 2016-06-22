@@ -1,0 +1,50 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'org.javafxports:jfxmobile-plugin:1.0.7'
+    }
+}
+
+apply plugin: 'org.javafxports.jfxmobile'
+apply plugin: 'application'
+apply plugin: 'maven'
+
+install {
+    repositories.mavenInstaller {
+        pom.version = '1.0.0'
+        pom.artifactId = 'gluon-maps'
+        pom.groupId = 'com.gluonhq'
+    }
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile 'com.gluonhq:charm-down-common:2.0.0';
+    desktopRuntime 'com.gluonhq:charm-down-desktop:2.0.0';
+    androidRuntime 'com.gluonhq:charm-down-android:2.0.0';
+    iosRuntime 'com.gluonhq:charm-down-ios:2.0.0';
+}
+
+mainClassName = 'com.gluonhq.maps.demo.DemoMap'
+//run {
+//    System.setProperty('java.util.logging.config.file', 'logging.properties')
+//    applicationDefaultJvmArgs = ["-Djava.util.logging.config.file=/logging.properties"]
+//}
+
+jfxmobile {
+    android {
+        manifest = 'src/android/AndroidManifest.xml'
+    }
+    ios {
+        infoPList = file('src/ios/Default-Info.plist')
+        forceLinkClasses = [
+            'com.gluonhq.**.*'
+        ]
+    }
+}
+
