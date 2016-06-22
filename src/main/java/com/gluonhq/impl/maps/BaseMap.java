@@ -114,8 +114,11 @@ public class BaseMap extends Group {
             sceneListener = (o, oldScene, newScene) -> {
                     if (newScene != null) {
                         //TODO Do we need to unbind from previous scene?
-                        area.widthProperty().bind(getScene().widthProperty().add(20));
-                        area.heightProperty().bind(getScene().heightProperty().add(20));
+                        getParent().layoutBoundsProperty().addListener(e -> {
+                            area.setWidth(getParent().getLayoutBounds().getWidth());
+                            area.setHeight(getParent().getLayoutBounds().getHeight());
+                            System.out.println("[JVDBG] Area changed to "+area);
+                        });
                         markDirty();
                     }
                     if (abortedTileLoad) {
@@ -125,7 +128,6 @@ public class BaseMap extends Group {
             };
         }
         this.sceneProperty().addListener(sceneListener);
-
     }
     
     /**
@@ -152,11 +154,12 @@ public class BaseMap extends Group {
         double jd = n * (1 - (Math.log(Math.tan(lat_rad) + 1 / Math.cos(lat_rad)) / Math.PI)) / 2;
         double mex = id * 256;
         double mey = jd * 256;
-        double ttx = mex - this.getScene().getWidth() / 2;
-        double tty = mey - this.getScene().getHeight() / 2;
+        double ttx = mex - this.getMyWidth() / 2;
+        double tty = mey - this.getMyHeight() / 2;
         setTranslateX(-1 * ttx);
         setTranslateY(-1 * tty);
-        logger.config("setCenter, tx = " + this.getTranslateX() + ", with = " + this.getScene().getWidth() / 2 + ", mex = " + mex);
+        logger.config("setCenter, tx = " + this.getTranslateX() + ", with = " + this.getMyWidth() / 2 + ", mex = " + mex);
+
         markDirty();
     }
 
@@ -179,7 +182,7 @@ public class BaseMap extends Group {
      */
     public void moveY(double dy) {
         double z = zoom.get();
-        double maxty = 256 * Math.pow(2, z) - this.getScene().getHeight();
+        double maxty = 256 * Math.pow(2, z) - getMyHeight();
         logger.config("ty = " + getTranslateY() + " and dy = " + dy);
         if (getTranslateY() <= 0) {
             if (getTranslateY() + maxty >= 0) {
@@ -237,7 +240,7 @@ public class BaseMap extends Group {
             }
         } else if (zp > 1) {
             double nz = zp + delta;
-            if (Math.pow(2, nz) * 256 > this.getScene().getHeight()) {
+            if (Math.pow(2, nz) * 256 > getMyHeight()) {
                 // also, we need to fit on the current screen
                 setTranslateX(txold + totX);
                 setTranslateY(tyold + totY);
@@ -266,8 +269,8 @@ public class BaseMap extends Group {
         double jd = n * (1 - (Math.log(Math.tan(lat_rad) + 1 / Math.cos(lat_rad)) / Math.PI)) / 2;
         double mex = id * 256;
         double mey = jd * 256;
-        double ttx = mex - this.getScene().getWidth() / 2;
-        double tty = mey - this.getScene().getHeight() / 2;
+        double ttx = mex - this.getMyWidth() / 2;
+        double tty = mey - this.getMyHeight() / 2;
         double x = this.getTranslateX() + mex;
         double y = this.getTranslateY() + mey;
         Point2D answer = new Point2D(x, y);
@@ -307,8 +310,9 @@ public class BaseMap extends Group {
         long j_max = 1 << nearestZoom;
         double tx = getTranslateX();
         double ty = getTranslateY();
-        double width = getScene().getWidth();
-        double height = getScene().getHeight();
+        double width = getMyWidth();
+        double height = getMyHeight();
+        System.out.println("width = "+width+", height = "+height);
         long imin = Math.max(0, (long) (-tx * Math.pow(2, deltaZ) / 256) - 1);
         long jmin = Math.max(0, (long) (-ty * Math.pow(2, deltaZ) / 256));
         long imax = Math.min(i_max, imin + (long) (width * Math.pow(2, deltaZ) / 256) + 3);
@@ -489,4 +493,19 @@ public class BaseMap extends Group {
         this.setNeedsLayout(true);
         Toolkit.getToolkit().requestNextPulse();
     }
+
+    private double getMyWidth() {
+     //   return this.getScene().getWidth();
+        return this.getParent().getLayoutBounds().getWidth();
+//        System.out.println("parent = "+this.getParent()+", bilp = "+this.getParent().getBoundsInLocal()+", bipp = "+this.getParent().getBoundsInParent());
+  //      return this.getBoundsInLocal().getWidth();
+    }
+    
+    private double getMyHeight() {
+      //  return this.getScene().getHeight();
+                return this.getParent().getLayoutBounds().getHeight();
+
+//        return this.getBoundsInLocal().getHeight();
+    }
+    
 }

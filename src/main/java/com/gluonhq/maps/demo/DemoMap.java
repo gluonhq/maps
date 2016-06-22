@@ -40,6 +40,8 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.logging.LogManager;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
@@ -59,16 +61,20 @@ public class DemoMap extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-
+        BorderPane bp = new BorderPane();
         MapView view = new MapView();
         view.addLayer(myDemoLayer());
         view.setZoom(11); 
+        view.setPrefWidth(400);
+        view.setPrefHeight(600);
+        bp.setCenter(view);
+        bp.setTop(new Label ("Gluon Maps Demo"));
         Scene scene;
         if (JavaFXPlatform.isDesktop()) {
-            scene = new Scene(view, 600, 700);
+            scene = new Scene(bp, 600, 700);
         } else {
             Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
-            scene = new Scene (view, bounds.getWidth(), bounds.getHeight());
+            scene = new Scene (bp, bounds.getWidth(), bounds.getHeight());
         }
         stage.setScene(scene);
         stage.show();
