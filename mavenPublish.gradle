@@ -1,0 +1,82 @@
+apply plugin: 'signing'
+
+configurations {
+    samples { extendsFrom runtime}
+    jdk
+    maven { extendsFrom archives }
+    published { extendsFrom archives, signatures}
+}
+
+signing {
+    required = { gradle.taskGraph.hasTask(uploadPublished) && !version.endsWith("SNAPSHOT") }
+    sign configurations.archives
+}
+
+repositories {
+    maven { url 'https://oss.sonatype.org/content/groups/staging' }
+    mavenCentral()
+}
+
+uploadPublished {
+
+    doFirst {
+        // configure repositories in a doFirst so we can late bind the properties
+        checkPasswords()
+        repositories {
+            mavenDeployer {
+                configurePOM(pom)
+                beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+                snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                    authentication userName: sonatypeUsername, password: sonatypePassword
+                }
+                repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                    authentication userName: sonatypeUsername, password: sonatypePassword
+                }
+            }
+        }
+    }
+    configuration = configurations.published
+}
+
+install {
+    doFirst {
+        configurePOM(repositories.mavenInstaller.pom)
+    }
+    configuration = configurations.published
+}
+
+private configurePOM(def pom) {
+    pom.project {
+        name 'Gluon Maps'
+        description "Gluon Maps"
+        url 'http://gluonhq.com/labs/maps'
+        modelVersion '4.0.0'
+        packaging 'jar'
+        scm {
+            connection 'scm:hg:https://bitbucket.org/gluon-oss/gluon-maps'
+            developerConnection 'scm:hg:https://bitbucket.org/gluon-oss/gluon-maps'
+            url 'https://bitbucket.org/gluon-oss/gluon-maps'
+        }
+        developers {
+            developer {
+                name = 'Johan Vos'
+                email = 'johan.vos@gluonhq.com'
+                organization = 'Gluon'
+                organizationUrl = 'http://gluonhq.com'
+            }
+        }
+        licenses {
+            license {
+                name 'GNU General Public License (GPL)'
+                url 'http://www.gnu.org/licenses/gpl.txt'
+            }
+        }
+    }
+}
+
+ext.checkPasswords =  {
+    if (!project.hasProperty('sonatypeUsername') || !project.hasProperty('sonatypePassword')) {
+        println "Please provide sonatypeUsername and sonatypePassword as gradle properties when uploading artifacts."
+        throw new StopExecutionException()
+    }
+}
