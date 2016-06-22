@@ -3,21 +3,17 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'org.javafxports:jfxmobile-plugin:1.0.7'
+        classpath 'org.javafxports:jfxmobile-plugin:1.0.8'
     }
 }
 
 apply plugin: 'org.javafxports.jfxmobile'
 apply plugin: 'application'
 apply plugin: 'maven'
+apply from: rootProject.file('mavenPublish.gradle')
 
-install {
-    repositories.mavenInstaller {
-        pom.version = '1.0.0'
-        pom.artifactId = 'gluon-maps'
-        pom.groupId = 'com.gluonhq'
-    }
-}
+group = 'com.gluonhq'
+version = '1.0.0-SNAPSHOT'
 
 repositories {
     jcenter()
@@ -48,3 +44,16 @@ jfxmobile {
     }
 }
 
+task sourcesJar (type: Jar) {
+    from sourceSets.main.allSource
+    classifier = 'sources'
+}
+
+task javadocJar (type: Jar, dependsOn: javadoc) {
+    from javadoc.destinationDir
+    classifier = 'javadoc'
+}
+
+artifacts {
+    archives sourcesJar, javadocJar
+}
