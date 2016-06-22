@@ -36,12 +36,14 @@ import javafx.scene.Parent;
  * {@link #layoutLayer()} method.
  * <p>
  * There are 2 reasons why the {@link #layoutLayer() } will be called:
+ * <ul>
  * <li>The MapLayer {@link #layoutLayer() } method will be called by the MapView
  * in case the coordinates (center/zoom) are changed.
  * <li>When the content of the MapLayer implementation changes (e.g. a POI is
  * added or moved), it should call the {@link #markDirty() } method.
  * This will mark this layer dirty and request it to be recalculated in the next
  * Pulse.
+ * </ul>
  * <p>
  * The MapLayer has access to the {@link #baseMap} instance that renders
  * the map tiles and it can use the methods provided by the {@link BaseMap}
@@ -76,7 +78,7 @@ public class MapLayer extends Parent {
 
     /**
      * Implementations should call this function when the content of the data
-     * has changed. It will set the <code>dirty<code> flag, and it will
+     * has changed. It will set the <code>dirty</code> flag, and it will
      * request the layer to be reconsidered during the next pulse.
      */
     protected void markDirty() {
