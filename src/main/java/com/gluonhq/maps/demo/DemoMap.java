@@ -65,8 +65,6 @@ public class DemoMap extends Application {
         MapView view = new MapView();
         view.addLayer(myDemoLayer());
         view.setZoom(11); 
-        view.setPrefWidth(400);
-        view.setPrefHeight(600);
         bp.setCenter(view);
         bp.setTop(new Label ("Gluon Maps Demo"));
         Scene scene;
