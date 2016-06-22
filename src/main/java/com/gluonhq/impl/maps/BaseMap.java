@@ -117,7 +117,6 @@ public class BaseMap extends Group {
                         getParent().layoutBoundsProperty().addListener(e -> {
                             area.setWidth(getParent().getLayoutBounds().getWidth());
                             area.setHeight(getParent().getLayoutBounds().getHeight());
-                            System.out.println("[JVDBG] Area changed to "+area);
                         });
                         markDirty();
                     }
@@ -312,7 +311,6 @@ public class BaseMap extends Group {
         double ty = getTranslateY();
         double width = getMyWidth();
         double height = getMyHeight();
-        System.out.println("width = "+width+", height = "+height);
         long imin = Math.max(0, (long) (-tx * Math.pow(2, deltaZ) / 256) - 1);
         long jmin = Math.max(0, (long) (-ty * Math.pow(2, deltaZ) / 256));
         long imax = Math.min(i_max, imin + (long) (width * Math.pow(2, deltaZ) / 256) + 3);
@@ -480,6 +478,7 @@ public class BaseMap extends Group {
         centerLon.set(mlon);
         centerLat.set(mlat);
     }
+    
     /**
      * When something changes that would lead to a change in UI representation 
      * (e.g. map is dragged or zoomed), this method should be called.
@@ -495,17 +494,11 @@ public class BaseMap extends Group {
     }
 
     private double getMyWidth() {
-     //   return this.getScene().getWidth();
         return this.getParent().getLayoutBounds().getWidth();
-//        System.out.println("parent = "+this.getParent()+", bilp = "+this.getParent().getBoundsInLocal()+", bipp = "+this.getParent().getBoundsInParent());
-  //      return this.getBoundsInLocal().getWidth();
     }
-    
-    private double getMyHeight() {
-      //  return this.getScene().getHeight();
-                return this.getParent().getLayoutBounds().getHeight();
 
-//        return this.getBoundsInLocal().getHeight();
+    private double getMyHeight() {
+        return this.getParent().getLayoutBounds().getHeight();
     }
-    
+
 }
