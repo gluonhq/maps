@@ -53,6 +53,7 @@ public class MapView extends Region {
     private Timeline t;
     private final List<MapLayer> layers = new LinkedList<>();
     private Rectangle clip;
+    private MapPoint centerPoint = null;
 
     /**
      * Create a MapView component.
@@ -66,12 +67,23 @@ public class MapView extends Region {
         baseMap.centerLon().addListener(o -> markDirty());
         clip = new Rectangle();
         this.setClip(clip);
+        this.layoutBoundsProperty().addListener(e -> {
+            // in case our assigned space changes, AND in case we are requested
+            // to center at a specific point, we need to re-center.
+            if (centerPoint != null) {
+                // we will set the center to a slightly different location first, in order 
+                // to trigger the invalidationListeners.
+                setCenter(centerPoint.getLatitude()+.00001, centerPoint.getLongitude()+.00001);
+                setCenter(centerPoint);
+            }
+        });
     }
 
     private void registerInputListeners() {
         setOnMousePressed(t -> {
             baseMap.x0 = t.getSceneX();
             baseMap.y0 = t.getSceneY();
+            centerPoint = null; // once the user starts moving, we don't track the center anymore.
         });
         setOnMouseDragged(t -> {
             baseMap.moveX(baseMap.x0 - t.getSceneX());
@@ -112,6 +124,7 @@ public class MapView extends Region {
      * @param lon
      */
     public void setCenter(double lat, double lon) {
+        this.centerPoint = new MapPoint(lat, lon);
         baseMap.setCenter(lat, lon);
     }
 
