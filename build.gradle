@@ -20,10 +20,10 @@ repositories {
 }
 
 dependencies {
-    compile 'com.gluonhq:charm-down-common:2.0.0';
-    desktopRuntime 'com.gluonhq:charm-down-desktop:2.0.0';
-    androidRuntime 'com.gluonhq:charm-down-android:2.0.0';
-    iosRuntime 'com.gluonhq:charm-down-ios:2.0.0';
+    compile 'com.gluonhq:charm-down-common:2.1.0';
+    desktopRuntime 'com.gluonhq:charm-down-desktop:2.1.0';
+    androidRuntime 'com.gluonhq:charm-down-android:2.1.0';
+    iosRuntime 'com.gluonhq:charm-down-ios:2.1.0';
 }
 
 mainClassName = 'com.gluonhq.maps.demo.DemoMap'

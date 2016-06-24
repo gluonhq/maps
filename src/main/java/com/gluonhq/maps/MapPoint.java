@@ -47,4 +47,9 @@ public class MapPoint {
         return this.longitude;
     }
     
+    public void update(double lat, double lon) {
+        this.latitude = lat;
+        this.longitude = lon;
+    }
+    
 }

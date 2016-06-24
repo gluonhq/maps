@@ -28,6 +28,9 @@
 package com.gluonhq.maps.demo;
 
 import com.gluonhq.charm.down.common.JavaFXPlatform;
+import com.gluonhq.charm.down.common.PlatformFactory;
+import com.gluonhq.charm.down.common.Position;
+import com.gluonhq.charm.down.common.PositionService;
 import com.gluonhq.maps.MapLayer;
 import com.gluonhq.maps.MapPoint;
 import com.gluonhq.maps.MapView;
@@ -39,6 +42,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.logging.LogManager;
+import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
@@ -91,4 +95,19 @@ public class DemoMap extends Application {
         return answer;
     }
     
+    private MapLayer positionLayer() {
+        PoiLayer answer = new PoiLayer();
+        PositionService positionService = PlatformFactory.getPlatform().getPositionService();
+        if (positionService != null) {
+            ReadOnlyObjectProperty<Position> positionProperty = positionService.positionProperty();
+            Position position = positionProperty.get();
+            final MapPoint mapPoint = new MapPoint(position.getLatitude(), position.getLongitude());
+            answer.addPoint(mapPoint, new Circle(7, Color.RED));
+            positionProperty.addListener(e -> {
+                Position pos = positionProperty.get();
+                mapPoint.update(pos.getLatitude(), pos.getLongitude());
+            });
+        }
+        return answer;
+    }
 }
