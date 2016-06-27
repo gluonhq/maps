@@ -54,7 +54,8 @@ public class MapView extends Region {
     private final List<MapLayer> layers = new LinkedList<>();
     private Rectangle clip;
     private MapPoint centerPoint = null;
-
+    private static boolean zooming = false;
+    
     /**
      * Create a MapView component.
      */
@@ -79,18 +80,23 @@ public class MapView extends Region {
         });
     }
 
+    
     private void registerInputListeners() {
         setOnMousePressed(t -> {
+            if (zooming) return;
             baseMap.x0 = t.getX();
             baseMap.y0 = t.getY();
             centerPoint = null; // once the user starts moving, we don't track the center anymore.
         });
         setOnMouseDragged(t -> {
+            if (zooming) return;
             baseMap.moveX(baseMap.x0 - t.getX());
             baseMap.moveY(baseMap.y0 - t.getY());
             baseMap.x0 = t.getX();
             baseMap.y0 = t.getY();
         });
+        setOnZoomStarted(t -> zooming = true);
+        setOnZoomFinished(t -> zooming = false);
         setOnZoom(t -> baseMap.zoom(t.getZoomFactor() - 1, t.getX(), t.getY()));
         if (JavaFXPlatform.isDesktop()) {
             setOnScroll(t -> baseMap.zoom(t.getDeltaY() > 1 ? .1 : -.1, t.getX(), t.getY()));
