@@ -54,7 +54,7 @@ public class MapView extends Region {
     private final List<MapLayer> layers = new LinkedList<>();
     private Rectangle clip;
     private MapPoint centerPoint = null;
-    private static boolean zooming = false;
+    private boolean zooming = false;
     
     /**
      * Create a MapView component.
