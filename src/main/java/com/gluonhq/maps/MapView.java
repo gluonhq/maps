@@ -81,19 +81,19 @@ public class MapView extends Region {
 
     private void registerInputListeners() {
         setOnMousePressed(t -> {
-            baseMap.x0 = t.getSceneX();
-            baseMap.y0 = t.getSceneY();
+            baseMap.x0 = t.getX();
+            baseMap.y0 = t.getY();
             centerPoint = null; // once the user starts moving, we don't track the center anymore.
         });
         setOnMouseDragged(t -> {
-            baseMap.moveX(baseMap.x0 - t.getSceneX());
-            baseMap.moveY(baseMap.y0 - t.getSceneY());
-            baseMap.x0 = t.getSceneX();
-            baseMap.y0 = t.getSceneY();
+            baseMap.moveX(baseMap.x0 - t.getX());
+            baseMap.moveY(baseMap.y0 - t.getY());
+            baseMap.x0 = t.getX();
+            baseMap.y0 = t.getY();
         });
-        setOnZoom(t -> baseMap.zoom(t.getZoomFactor() - 1, (baseMap.x0 + t.getSceneX()) / 2.0, (baseMap.y0 + t.getSceneY()) / 2.0));
+        setOnZoom(t -> baseMap.zoom(t.getZoomFactor() - 1, (baseMap.x0 + t.getX()) / 2.0, (baseMap.y0 + t.getY()) / 2.0));
         if (JavaFXPlatform.isDesktop()) {
-            setOnScroll(t -> baseMap.zoom(t.getDeltaY() > 1 ? .1 : -.1, t.getSceneX(), t.getSceneY()));
+            setOnScroll(t -> baseMap.zoom(t.getDeltaY() > 1 ? .1 : -.1, t.getX(), t.getY()));
         }
     }
 
