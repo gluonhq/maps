@@ -91,7 +91,7 @@ public class MapView extends Region {
             baseMap.x0 = t.getX();
             baseMap.y0 = t.getY();
         });
-        setOnZoom(t -> baseMap.zoom(t.getZoomFactor() - 1, (baseMap.x0 + t.getX()) / 2.0, (baseMap.y0 + t.getY()) / 2.0));
+        setOnZoom(t -> baseMap.zoom(t.getZoomFactor() - 1, t.getX(), t.getY()));
         if (JavaFXPlatform.isDesktop()) {
             setOnScroll(t -> baseMap.zoom(t.getDeltaY() > 1 ? .1 : -.1, t.getX(), t.getY()));
         }
