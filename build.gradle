@@ -17,13 +17,17 @@ version = '1.0.1-SNAPSHOT'
 
 repositories {
     jcenter()
+    maven {
+        url 'http://nexus.gluonhq.com/nexus/content/repositories/releases'
+    }
+
 }
 
 dependencies {
-    compile 'com.gluonhq:charm-down-common:2.1.0';
-    desktopRuntime 'com.gluonhq:charm-down-desktop:2.1.0';
-    androidRuntime 'com.gluonhq:charm-down-android:2.1.0';
-    iosRuntime 'com.gluonhq:charm-down-ios:2.1.0';
+    compile 'com.gluonhq:charm-down-common:2.0.1';
+    desktopRuntime 'com.gluonhq:charm-down-desktop:2.0.1';
+    androidRuntime 'com.gluonhq:charm-down-android:2.0.1';
+    iosRuntime 'com.gluonhq:charm-down-ios:2.0.1';
 }
 
 mainClassName = 'com.gluonhq.maps.demo.DemoMap'

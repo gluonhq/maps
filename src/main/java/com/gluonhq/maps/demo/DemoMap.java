@@ -67,8 +67,8 @@ public class DemoMap extends Application {
     public void start(Stage stage) throws Exception {
         BorderPane bp = new BorderPane();
         MapView view = new MapView();
-        view.addLayer(myDemoLayer());
-        view.setZoom(11); 
+        view.addLayer(positionLayer());
+        view.setZoom(3); 
         bp.setCenter(view);
         bp.setTop(new Label ("Gluon Maps Demo"));
         Scene scene;
@@ -80,10 +80,10 @@ public class DemoMap extends Application {
         }
         stage.setScene(scene);
         stage.show();
-        MapPoint moscone = new MapPoint(37.7841772,-122.403751);
-        MapPoint sun = new MapPoint(37.396256,-121.953847);
-        view.setCenter(moscone);
-        view.flyTo(2., sun, 2.);
+//        MapPoint moscone = new MapPoint(37.7841772,-122.403751);
+//        MapPoint sun = new MapPoint(37.396256,-121.953847);
+//        view.setCenter(moscone);
+//        view.flyTo(2., sun, 2.);
     }
     
     private MapLayer myDemoLayer () {
@@ -98,13 +98,18 @@ public class DemoMap extends Application {
     private MapLayer positionLayer() {
         PoiLayer answer = new PoiLayer();
         PositionService positionService = PlatformFactory.getPlatform().getPositionService();
+        System.out.println("POSSERVICE = "+positionService);
         if (positionService != null) {
             ReadOnlyObjectProperty<Position> positionProperty = positionService.positionProperty();
             Position position = positionProperty.get();
+            if (position == null) {position = new Position(50.,4.);}
             final MapPoint mapPoint = new MapPoint(position.getLatitude(), position.getLongitude());
             answer.addPoint(mapPoint, new Circle(7, Color.RED));
+            
             positionProperty.addListener(e -> {
                 Position pos = positionProperty.get();
+                                System.out.println("[JVDBG] NEW POSITION "+pos);
+
                 mapPoint.update(pos.getLatitude(), pos.getLongitude());
             });
         }
