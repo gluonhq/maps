@@ -4,6 +4,7 @@
         <uses-permission android:name="android.permission.INTERNET"/>
         <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
         <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+        <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
         <uses-sdk android:minSdkVersion="4" android:targetSdkVersion="21"/>
         <application android:label="GluonMaps" android:name="android.support.multidex.MultiDexApplication" android:icon="@mipmap/ic_launcher">
                 <activity android:name="javafxports.android.FXActivity" android:label="GluonMaps" android:configChanges="orientation|screenSize">
