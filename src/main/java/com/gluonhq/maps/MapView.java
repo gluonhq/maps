@@ -54,7 +54,8 @@ public class MapView extends Region {
     private final List<MapLayer> layers = new LinkedList<>();
     private Rectangle clip;
     private MapPoint centerPoint = null;
-
+    private boolean zooming = false;
+    
     /**
      * Create a MapView component.
      */
@@ -79,21 +80,26 @@ public class MapView extends Region {
         });
     }
 
+    
     private void registerInputListeners() {
         setOnMousePressed(t -> {
-            baseMap.x0 = t.getSceneX();
-            baseMap.y0 = t.getSceneY();
+            if (zooming) return;
+            baseMap.x0 = t.getX();
+            baseMap.y0 = t.getY();
             centerPoint = null; // once the user starts moving, we don't track the center anymore.
         });
         setOnMouseDragged(t -> {
-            baseMap.moveX(baseMap.x0 - t.getSceneX());
-            baseMap.moveY(baseMap.y0 - t.getSceneY());
-            baseMap.x0 = t.getSceneX();
-            baseMap.y0 = t.getSceneY();
+            if (zooming) return;
+            baseMap.moveX(baseMap.x0 - t.getX());
+            baseMap.moveY(baseMap.y0 - t.getY());
+            baseMap.x0 = t.getX();
+            baseMap.y0 = t.getY();
         });
-        setOnZoom(t -> baseMap.zoom(t.getZoomFactor() - 1, (baseMap.x0 + t.getSceneX()) / 2.0, (baseMap.y0 + t.getSceneY()) / 2.0));
+        setOnZoomStarted(t -> zooming = true);
+        setOnZoomFinished(t -> zooming = false);
+        setOnZoom(t -> baseMap.zoom(t.getZoomFactor() - 1, t.getX(), t.getY()));
         if (JavaFXPlatform.isDesktop()) {
-            setOnScroll(t -> baseMap.zoom(t.getDeltaY() > 1 ? .1 : -.1, t.getSceneX(), t.getSceneY()));
+            setOnScroll(t -> baseMap.zoom(t.getDeltaY() > 1 ? .1 : -.1, t.getX(), t.getY()));
         }
     }
 
