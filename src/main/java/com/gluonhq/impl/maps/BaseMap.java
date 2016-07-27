@@ -246,7 +246,7 @@ public class BaseMap extends Group {
                 zoom.set(zp + delta);
                 markDirty();
             } else {
-                System.out.println("sorry, would be too small");
+                logger.warning("sorry, would be too small");
             }
         }
         logger.fine("after, zp = " + zoom.get() + ", tx = " + getTranslateX());
@@ -322,7 +322,7 @@ public class BaseMap extends Group {
                 SoftReference<MapTile> ref = tiles[nearestZoom].get(key);
                 if ((ref == null) || (ref.get() == null)) {
                     if (ref != null) {
-                        System.out.println("RECLAIMED: z=" + nearestZoom + ",i=" + i + ",j=" + j);
+                        logger.fine("RECLAIMED: z=" + nearestZoom + ",i=" + i + ",j=" + j);
                     }
                     MapTile tile = new MapTile(this, nearestZoom, i, j);
                     tiles[nearestZoom].put(key, new SoftReference<>(tile));
