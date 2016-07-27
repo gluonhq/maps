@@ -73,7 +73,7 @@ public class ImageRetriever {
                 cacheThread = new CacheThread(cacheRoot.getPath());
                 cacheThread.start();
             }
-            System.out.println("hasfilecache = " + hasFileCache);
+            logger.info("hasfilecache = " + hasFileCache);
         } catch (IOException ex) {
             hasFileCache = false;
             logger.log(Level.SEVERE, null, ex);
@@ -140,6 +140,7 @@ public class ImageRetriever {
             this.active = false;
         }
 
+        @Override
         public void run() {
             while (active) {
                 try {
@@ -153,7 +154,7 @@ public class ImageRetriever {
                         doCache(url, zoom, i, j);
                     }
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    logger.log(Level.WARNING, null, e);
                 }
             }
         }
@@ -173,7 +174,7 @@ public class ImageRetriever {
                 URL url = new URL(urlString);
                 try (InputStream inputStream = url.openConnection().getInputStream()) {
                     String enc = File.separator + zoom + File.separator + i + File.separator + j + ".png";
-                    System.out.println("retrieve " + urlString + " and store " + enc);
+                    logger.info("retrieve " + urlString + " and store " + enc);
                     File candidate = new File(cacheRoot, enc);
                     candidate.getParentFile().mkdirs();
                     try (FileOutputStream fos = new FileOutputStream(candidate)) {
