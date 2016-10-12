@@ -64,7 +64,7 @@ public class ImageRetriever {
         try {
             File storageRoot = Services.get(StorageService.class)
                     .flatMap(StorageService::getPrivateStorage)
-                    .orElseThrow(() -> new IOException());
+                    .orElseThrow(() -> new IOException("Storage Service is not available"));
             
             cacheRoot = new File(storageRoot, ".gluonmaps");
             logger.fine("[JVDBG] cacheroot = " + cacheRoot);
