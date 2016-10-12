@@ -27,7 +27,7 @@
  */
 package com.gluonhq.maps;
 
-import com.gluonhq.charm.down.common.JavaFXPlatform;
+import com.gluonhq.charm.down.Platform;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -98,7 +98,7 @@ public class MapView extends Region {
         setOnZoomStarted(t -> zooming = true);
         setOnZoomFinished(t -> zooming = false);
         setOnZoom(t -> baseMap.zoom(t.getZoomFactor() - 1, t.getX(), t.getY()));
-        if (JavaFXPlatform.isDesktop()) {
+        if (Platform.isDesktop()) {
             setOnScroll(t -> baseMap.zoom(t.getDeltaY() > 1 ? .1 : -.1, t.getX(), t.getY()));
         }
     }

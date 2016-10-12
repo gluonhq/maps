@@ -27,10 +27,10 @@
  */
 package com.gluonhq.maps.demo;
 
-import com.gluonhq.charm.down.common.JavaFXPlatform;
-import com.gluonhq.charm.down.common.PlatformFactory;
-import com.gluonhq.charm.down.common.Position;
-import com.gluonhq.charm.down.common.PositionService;
+import com.gluonhq.charm.down.Platform;
+import com.gluonhq.charm.down.Services;
+import com.gluonhq.charm.down.plugins.Position;
+import com.gluonhq.charm.down.plugins.PositionService;
 import com.gluonhq.maps.MapLayer;
 import com.gluonhq.maps.MapPoint;
 import com.gluonhq.maps.MapView;
@@ -41,9 +41,10 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.logging.Level;
 import java.util.logging.LogManager;
+import java.util.logging.Logger;
 import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
@@ -55,14 +56,18 @@ import javafx.scene.shape.Circle;
  */
 public class DemoMap extends Application {
 
+    private static final Logger LOGGER = Logger.getLogger(DemoMap.class.getName());
+
     static {
         try {
-            LogManager.getLogManager().readConfiguration( DemoMap.class.getResourceAsStream("/logging.properties") );
+            LogManager.getLogManager().readConfiguration(DemoMap.class.getResourceAsStream("/logging.properties"));
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error reading logging properties file", e);
         }
     }
-
+    
+    private MapPoint mapPoint;
+            
     @Override
     public void start(Stage stage) throws Exception {
         BorderPane bp = new BorderPane();
@@ -70,9 +75,9 @@ public class DemoMap extends Application {
         view.addLayer(positionLayer());
         view.setZoom(3); 
         bp.setCenter(view);
-        bp.setTop(new Label ("Gluon Maps Demo"));
+        bp.setTop(new Label("Gluon Maps Demo"));
         Scene scene;
-        if (JavaFXPlatform.isDesktop()) {
+        if (Platform.isDesktop()) {
             scene = new Scene(bp, 600, 700);
         } else {
             Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
@@ -80,39 +85,46 @@ public class DemoMap extends Application {
         }
         stage.setScene(scene);
         stage.show();
-//        MapPoint moscone = new MapPoint(37.7841772,-122.403751);
-//        MapPoint sun = new MapPoint(37.396256,-121.953847);
-//        view.setCenter(moscone);
-//        view.flyTo(2., sun, 2.);
+
+        view.flyTo(1., mapPoint, 2.);
     }
     
-    private MapLayer myDemoLayer () {
-        PoiLayer answer = new PoiLayer();
-        Node icon1 = new Circle(7, Color.BLUE);
-        answer.addPoint(new MapPoint(50.8458,4.724), icon1);
-        Node icon2 = new Circle(7, Color.GREEN);
-        answer.addPoint(new MapPoint(37.396256,-121.953847), icon2);
-        return answer;
-    }
+//    private MapLayer myDemoLayer () {
+//        PoiLayer answer = new PoiLayer();
+//        Node icon1 = new Circle(7, Color.BLUE);
+//        answer.addPoint(new MapPoint(50.8458,4.724), icon1);
+//        Node icon2 = new Circle(7, Color.GREEN);
+//        answer.addPoint(new MapPoint(37.396256,-121.953847), icon2);
+//        return answer;
+//    }
     
     private MapLayer positionLayer() {
-        PoiLayer answer = new PoiLayer();
-        PositionService positionService = PlatformFactory.getPlatform().getPositionService();
-        System.out.println("POSSERVICE = "+positionService);
-        if (positionService != null) {
-            ReadOnlyObjectProperty<Position> positionProperty = positionService.positionProperty();
-            Position position = positionProperty.get();
-            if (position == null) {position = new Position(50.,4.);}
-            final MapPoint mapPoint = new MapPoint(position.getLatitude(), position.getLongitude());
-            answer.addPoint(mapPoint, new Circle(7, Color.RED));
-            
-            positionProperty.addListener(e -> {
-                Position pos = positionProperty.get();
-                                System.out.println("[JVDBG] NEW POSITION "+pos);
+        return Services.get(PositionService.class)
+                .map(positionService -> {
+                    ReadOnlyObjectProperty<Position> positionProperty = positionService.positionProperty();
+                    Position position = positionProperty.get();
+                    if (position == null) {
+                        position = new Position(50.,4.);
+                    }
+                    mapPoint = new MapPoint(position.getLatitude(), position.getLongitude());
+                    LOGGER.log(Level.INFO, "Initial Position: " + position.getLatitude() + ", " + position.getLongitude());
+                        
+                    PoiLayer answer = new PoiLayer();
+                    answer.addPoint(mapPoint, new Circle(7, Color.RED));
 
-                mapPoint.update(pos.getLatitude(), pos.getLongitude());
-            });
-        }
-        return answer;
+                    positionProperty.addListener(e -> {
+                        Position pos = positionProperty.get();
+                        LOGGER.log(Level.INFO, "New Position: " + pos.getLatitude() + ", " + pos.getLongitude());
+                        mapPoint.update(pos.getLatitude(), pos.getLongitude());
+                    });
+                    return answer;
+                })
+                .orElseGet(() -> {
+                    LOGGER.log(Level.WARNING, "Position Service not available");
+                    PoiLayer answer = new PoiLayer();
+                    mapPoint = new MapPoint(50., 4.);
+                    answer.addPoint(mapPoint, new Circle(7, Color.RED));
+                    return answer;
+                });
     }
 }
