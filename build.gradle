@@ -3,7 +3,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'org.javafxports:jfxmobile-plugin:1.0.8'
+        classpath 'org.javafxports:jfxmobile-plugin:1.1.0'
     }
 }
 
@@ -15,21 +15,6 @@ apply from: rootProject.file('mavenPublish.gradle')
 group = 'com.gluonhq'
 version = '1.0.1-SNAPSHOT'
 
-repositories {
-    jcenter()
-    maven {
-        url 'http://nexus.gluonhq.com/nexus/content/repositories/releases'
-    }
-
-}
-
-dependencies {
-    compile 'com.gluonhq:charm-down-common:2.0.1';
-    desktopRuntime 'com.gluonhq:charm-down-desktop:2.0.1';
-    androidRuntime 'com.gluonhq:charm-down-android:2.0.1';
-    iosRuntime 'com.gluonhq:charm-down-ios:2.0.1';
-}
-
 mainClassName = 'com.gluonhq.maps.demo.DemoMap'
 //run {
 //    System.setProperty('java.util.logging.config.file', 'logging.properties')
@@ -37,6 +22,10 @@ mainClassName = 'com.gluonhq.maps.demo.DemoMap'
 //}
 
 jfxmobile {
+    downConfig {
+        version = "3.0.0"
+        plugins 'storage', 'position'
+    }
     android {
         manifest = 'src/android/AndroidManifest.xml'
     }

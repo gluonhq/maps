@@ -27,7 +27,8 @@
  */
 package com.gluonhq.impl.maps;
 
-import com.gluonhq.charm.down.common.PlatformFactory;
+import com.gluonhq.charm.down.Services;
+import com.gluonhq.charm.down.plugins.StorageService;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.concurrent.Task;
 import javafx.scene.image.Image;
@@ -61,7 +62,10 @@ public class ImageRetriever {
 
     static {
         try {
-            File storageRoot = PlatformFactory.getPlatform().getPrivateStorage();
+            File storageRoot = Services.get(StorageService.class)
+                    .flatMap(StorageService::getPrivateStorage)
+                    .orElseThrow(() -> new IOException("Storage Service is not available"));
+            
             cacheRoot = new File(storageRoot, ".gluonmaps");
             logger.fine("[JVDBG] cacheroot = " + cacheRoot);
             if (!cacheRoot.isDirectory()) {
