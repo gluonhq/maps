@@ -35,6 +35,7 @@ import com.gluonhq.maps.MapLayer;
 import com.gluonhq.maps.MapPoint;
 import com.gluonhq.maps.MapView;
 import javafx.application.Application;
+import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.stage.Screen;
@@ -70,18 +71,24 @@ public class DemoMap extends Application {
             
     @Override
     public void start(Stage stage) throws Exception {
-        BorderPane bp = new BorderPane();
+
         MapView view = new MapView();
         view.addLayer(positionLayer());
         view.setZoom(3); 
-        bp.setCenter(view);
-        bp.setTop(new Label("Gluon Maps Demo"));
         Scene scene;
         if (Platform.isDesktop()) {
-            scene = new Scene(bp, 600, 700);
+            scene = new Scene(view, 600, 700);
+            stage.setTitle("Gluon Maps Demo");
         } else {
+            BorderPane bp = new BorderPane();
+            bp.setCenter(view);
+            final Label label = new Label("Gluon Maps Demo");
+            label.setAlignment(Pos.CENTER);
+            label.setMaxWidth(Double.MAX_VALUE);
+            label.setStyle("-fx-background-color: dimgrey; -fx-text-fill: white;");
+            bp.setTop(label);
             Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
-            scene = new Scene (bp, bounds.getWidth(), bounds.getHeight());
+            scene = new Scene(bp, bounds.getWidth(), bounds.getHeight());
         }
         stage.setScene(scene);
         stage.show();
