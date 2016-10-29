@@ -66,7 +66,7 @@ class MapTile extends Region {
         return coveredTiles.size() > 0;
     }
 
-    private final InvalidationListener zl;
+    private final InvalidationListener zl = o -> calculatePosition();
     private ReadOnlyDoubleProperty progress;
 
     // final Image image;
@@ -84,9 +84,8 @@ class MapTile extends Region {
         iv.setMouseTransparent(true);
         this.progress = ImageRetriever.fillImage(iv, myZoom, i, j);
 
-        Label l = new Label("Tile [" + myZoom + "], i = " + i + ", j = " + j);
+//        Label l = new Label("Tile [" + myZoom + "], i = " + i + ", j = " + j);
         getChildren().addAll(iv);//,l);
-        zl = recalculate();
         this.progress.addListener(o -> {
             if (this.progress.get() == 1.) {
                 debug("[JVDBG] got image  [" + myZoom + "], i = " + i + ", j = " + j);
@@ -113,19 +112,13 @@ class MapTile extends Region {
         return myZoom;
     }
 
-    private InvalidationListener recalculate() {
-        return o -> calculatePosition();
-    }
-
     private void calculatePosition() {
         double currentZoom = baseMap.zoom().get();
         int visibleWindow = (int) floor(currentZoom + BaseMap.TIPPING);
-        if ((visibleWindow == myZoom) || isCovering() || ((visibleWindow >= BaseMap.MAX_ZOOM) && (myZoom == BaseMap.MAX_ZOOM - 1))) {
-            this.setVisible(true);
-
-        } else {
-            this.setVisible(false);
-        }
+        boolean visible =  visibleWindow == myZoom ||
+                           isCovering() ||
+                           ((visibleWindow >= BaseMap.MAX_ZOOM) && (myZoom == BaseMap.MAX_ZOOM - 1));
+        this.setVisible(visible);
         logger.fine("visible tile " + this + "? " + this.isVisible() + (this.isVisible() ? " covering? " + isCovering() : ""));
         double sf = Math.pow(2, currentZoom - myZoom);
         scale.setX(sf);
