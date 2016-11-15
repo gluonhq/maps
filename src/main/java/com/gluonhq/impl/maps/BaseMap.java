@@ -204,7 +204,15 @@ public class BaseMap extends Group {
         prefZoom.set(z);
         
     }
-    
+
+    /**
+     * Returns the preferred zoom level of this map.
+     * @return the zoom level
+     */
+    public double getZoom() {
+        return prefZoom.get();
+    }
+
     private void doZoom(double z) {
         zoom.set(z);
         doSetCenter(this.lat, this.lon);

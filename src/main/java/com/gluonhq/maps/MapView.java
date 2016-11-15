@@ -115,6 +115,14 @@ public class MapView extends Region {
     }
 
     /**
+     * Returns the preferred zoom level of this map.
+     * @return the zoom level
+     */
+    public double getZoom() {
+        return baseMap.getZoom();
+    }
+
+    /**
      * Request the map to position itself around the specified center
      *
      * @param mapPoint
