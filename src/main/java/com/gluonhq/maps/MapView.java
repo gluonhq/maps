@@ -132,6 +132,15 @@ public class MapView extends Region {
     }
 
     /**
+     * Returns the center point of this map
+     * @return the center point
+     */
+    public MapPoint getCenter() {
+        MapPoint center = getCenter();
+        return new MapPoint(center.getLatitude(), center.getLongitude());
+    }
+
+    /**
      * Request the map to position itself around the specified center
      *
      * @param lat

@@ -27,6 +27,8 @@
  */
 package com.gluonhq.maps;
 
+import javafx.beans.NamedArg;
+
 /**
  *
  */
@@ -34,7 +36,7 @@ public class MapPoint {
 
     private double latitude, longitude;
 
-    public MapPoint(double lat, double lon) {
+    public MapPoint(@NamedArg("latitude") double lat, @NamedArg("longitude") double lon) {
         this.latitude = lat;
         this.longitude = lon;
     }

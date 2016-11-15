@@ -139,6 +139,15 @@ public class BaseMap extends Group {
         prefCenterLon.set(lon);
     }
 
+    public void setCenter(Point2D center) {
+        prefCenterLat.set(center.getX());
+        prefCenterLon.set(center.getY());
+    }
+
+    public Point2D getCenter() {
+        return new Point2D(prefCenterLat.get(), prefCenterLon.get());
+    }
+
     private void doSetCenter(double lat, double lon) {
         this.lat = lat;
         this.lon = lon;
