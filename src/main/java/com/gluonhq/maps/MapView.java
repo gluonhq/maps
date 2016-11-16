@@ -37,6 +37,7 @@ import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.geometry.Point2D;
 import javafx.scene.layout.Region;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
@@ -136,8 +137,8 @@ public class MapView extends Region {
      * @return the center point
      */
     public MapPoint getCenter() {
-        MapPoint center = getCenter();
-        return new MapPoint(center.getLatitude(), center.getLongitude());
+        Point2D center = baseMap.getCenter();
+        return new MapPoint(center.getX(), center.getY());
     }
 
     /**
