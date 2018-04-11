@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Gluon
+ * Copyright (c) 2016 - 2018, Gluon
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,6 @@ package com.gluonhq.impl.maps;
 import com.gluonhq.charm.down.Services;
 import com.gluonhq.charm.down.plugins.StorageService;
 import javafx.beans.property.ReadOnlyDoubleProperty;
-import javafx.concurrent.Task;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
@@ -39,9 +38,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.BlockingDeque;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -52,8 +54,8 @@ import java.util.logging.Logger;
  */
 public class ImageRetriever {
 
-
     private static final Logger logger = Logger.getLogger( ImageRetriever.class.getName() );
+    private static final int TIMEOUT = 5000;
 
     static String host = "http://tile.openstreetmap.org/";
     static File cacheRoot;
@@ -84,20 +86,24 @@ public class ImageRetriever {
         }
     }
 
+    private final static Executor EXECUTOR = Executors.newFixedThreadPool(2, runnable -> {
+        Thread thread = new Thread(runnable);
+        thread.setDaemon(true);
+        return thread;
+    });
+
     static ReadOnlyDoubleProperty fillImage(ImageView imageView, int zoom, long i, long j) {
         Image image = fromFileCache(zoom, i, j);
         if (image == null) {
             String urlString = host + zoom + "/" + i + "/" + j + ".png";
             if (hasFileCache) {
-                Task<Object> task = new Task() {
-                    @Override
-                    protected Object call() throws Exception {
+                EXECUTOR.execute(() -> {
+                    try {
                         cacheThread.cacheImage(urlString, zoom, i, j);
-                        return null; // can't return image yet
+                    } catch (Throwable ex) {
+                        logger.log(Level.SEVERE, null, ex);
                     }
-                };
-                Thread t = new Thread(task);
-                t.start();
+                });
             }
             image = new Image(urlString, true);
         }
@@ -174,28 +180,46 @@ public class ImageRetriever {
         }
 
         private void doCache(String urlString, int zoom, long i, long j) {
+            final URLConnection openConnection;
             try {
                 URL url = new URL(urlString);
-                try (InputStream inputStream = url.openConnection().getInputStream()) {
-                    String enc = File.separator + zoom + File.separator + i + File.separator + j + ".png";
-                    logger.info("retrieve " + urlString + " and store " + enc);
-                    File candidate = new File(cacheRoot, enc);
-                    candidate.getParentFile().mkdirs();
-                    try (FileOutputStream fos = new FileOutputStream(candidate)) {
-                        byte[] buff = new byte[4096];
-                        int len = inputStream.read(buff);
-                        while (len > 0) {
-                            fos.write(buff, 0, len);
-                            len = inputStream.read(buff);
-                        }
-                        fos.close();
-                    }
+                openConnection = url.openConnection();
+                openConnection.setConnectTimeout(TIMEOUT);
+                openConnection.setReadTimeout(TIMEOUT);
+            } catch (IOException ex) {
+                logger.log(Level.SEVERE, null, ex);
+                return;
+            }
+            InputStream inputStream = null;
+            FileOutputStream fos = null;
+            try {
+                inputStream = openConnection.getInputStream();
+                String enc = File.separator + zoom + File.separator + i + File.separator + j + ".png";
+                logger.info("retrieve " + urlString + " and store " + enc);
+                File candidate = new File(cacheRoot, enc);
+                candidate.getParentFile().mkdirs();
+                fos = new FileOutputStream(candidate);
+                byte[] buff = new byte[4096];
+                int len = inputStream.read(buff);
+                while (len > 0) {
+                    fos.write(buff, 0, len);
+                    len = inputStream.read(buff);
                 }
             } catch (IOException ex) {
                 logger.log(Level.SEVERE, null, ex);
+            } finally {
+                try {
+                    if (fos != null) {
+                        fos.close();
+                    }
+                    if (inputStream != null) {
+                        inputStream.close();
+                    }
+                } catch (IOException ex) {
+                    logger.log(Level.WARNING, null, ex);
+                }
             }
         }
-
     }
 
 }
