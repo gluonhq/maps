@@ -113,6 +113,17 @@ public class MapView extends Region {
         }
     }
 
+   /**
+     * Get the position on the map represented by a given coordinate
+     *
+     * @param sceneX x coordinate
+     * @param sceneY y coordinate
+     * @return map position
+     */
+    public MapPoint getMapPosition(double sceneX, double sceneY) {
+        return baseMap.getMapPosition(sceneX, sceneY);
+    }
+
     /**
      * Request the map to set its zoom level to the specified value. The map
      * considers this request, but it does not guarantee the zoom level will be
