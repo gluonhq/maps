@@ -13,7 +13,7 @@ apply plugin: 'maven'
 apply from: rootProject.file('mavenPublish.gradle')
 
 group = 'com.gluonhq'
-version = '1.0.2'
+version = '1.0.3-SNAPSHOT'
 
 mainClassName = 'com.gluonhq.maps.demo.DemoMap'
 //run {
