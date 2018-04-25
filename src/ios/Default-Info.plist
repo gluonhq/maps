@@ -62,6 +62,9 @@
                 </dict>
             </dict>
         </dict>
-
+        <key>NSLocationUsageDescription</key>
+        <string>Gluon Maps requires Location Service enabled</string>
+        <key>NSLocationWhenInUseUsageDescription</key>
+        <string>Gluon Maps requires Location Service enabled</string>
 </dict>
 </plist>

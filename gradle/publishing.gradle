@@ -25,33 +25,37 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.gluonhq.maps;
 
-import javafx.beans.NamedArg;
+import java.text.SimpleDateFormat
 
-/**
- *
- */
-public class MapPoint {
+Date buildTimeAndDate = new Date()
+ext {
+    buildBy = System.properties['user.name']
+    buildDate = new SimpleDateFormat('yyyy-MM-dd').format(buildTimeAndDate)
+    buildTime = new SimpleDateFormat('HH:mm:ss.SSSZ').format(buildTimeAndDate)
+    buildRevision = versioning.info.commit
+    buildCreatedBy = "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})".toString()
+}
 
-    private double latitude, longitude;
+jar {
+    manifest {
+        attributes(
+            'Built-By': buildBy,
+            'Created-By': buildCreatedBy,
+            'Build-Date': buildDate,
+            'Build-Time': buildTime,
+            'Build-Revision': buildRevision,
+            'Specification-Title': project.name,
+            'Specification-Version': project.version,
+            'Specification-Vendor': 'gluonhq.com',
+            'Implementation-Title': project.name,
+            'Implementation-Version': project.version,
+            'Implementation-Vendor': 'gluonhq.com'
+        )
+    }
 
-    public MapPoint(@NamedArg("latitude") double lat, @NamedArg("longitude") double lon) {
-        this.latitude = lat;
-        this.longitude = lon;
+    metaInf {
+        from rootProject.file('.')
+        include 'LICENSE'
     }
-    
-    public double getLatitude() {
-        return this.latitude;
-    }
-    
-    public double getLongitude() {
-        return this.longitude;
-    }
-    
-    public void update(double lat, double lon) {
-        this.latitude = lat;
-        this.longitude = lon;
-    }
-    
 }

@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2016, Gluon
+ * Copyright (c) 2016 - 2018, Gluon
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -37,6 +37,7 @@ import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.geometry.Point2D;
 import javafx.scene.layout.Region;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
@@ -50,11 +51,12 @@ import javafx.util.Duration;
 public class MapView extends Region {
 
     private final BaseMap baseMap;
-    private Timeline t;
+    private Timeline timeline;
     private final List<MapLayer> layers = new LinkedList<>();
-    private Rectangle clip;
+    private final Rectangle clip;
     private MapPoint centerPoint = null;
     private boolean zooming = false;
+    private boolean enableDragging = false;
     
     /**
      * Create a MapView component.
@@ -87,20 +89,39 @@ public class MapView extends Region {
             baseMap.x0 = t.getX();
             baseMap.y0 = t.getY();
             centerPoint = null; // once the user starts moving, we don't track the center anymore.
+            // dragging is enabled only after a pressed event, to prevent dragging right after zooming
+            enableDragging = true;
         });
         setOnMouseDragged(t -> {
-            if (zooming) return;
+            if (zooming || !enableDragging) {
+                return;
+            }
             baseMap.moveX(baseMap.x0 - t.getX());
             baseMap.moveY(baseMap.y0 - t.getY());
             baseMap.x0 = t.getX();
             baseMap.y0 = t.getY();
         });
-        setOnZoomStarted(t -> zooming = true);
+        setOnMouseReleased(t -> enableDragging = false);
+        setOnZoomStarted(t -> {
+            zooming = true;
+            enableDragging = false;
+        });
         setOnZoomFinished(t -> zooming = false);
         setOnZoom(t -> baseMap.zoom(t.getZoomFactor() - 1, t.getX(), t.getY()));
         if (Platform.isDesktop()) {
             setOnScroll(t -> baseMap.zoom(t.getDeltaY() > 1 ? .1 : -.1, t.getX(), t.getY()));
         }
+    }
+
+   /**
+     * Get the position on the map represented by a given coordinate
+     *
+     * @param sceneX x coordinate
+     * @param sceneY y coordinate
+     * @return map position
+     */
+    public MapPoint getMapPosition(double sceneX, double sceneY) {
+        return baseMap.getMapPosition(sceneX, sceneY);
     }
 
     /**
@@ -115,12 +136,29 @@ public class MapView extends Region {
     }
 
     /**
+     * Returns the preferred zoom level of this map.
+     * @return the zoom level
+     */
+    public double getZoom() {
+        return baseMap.getZoom();
+    }
+
+    /**
      * Request the map to position itself around the specified center
      *
      * @param mapPoint
      */
     public void setCenter(MapPoint mapPoint) {
         setCenter(mapPoint.getLatitude(), mapPoint.getLongitude());
+    }
+
+    /**
+     * Returns the center point of this map
+     * @return the center point
+     */
+    public MapPoint getCenter() {
+        Point2D center = baseMap.getCenter();
+        return new MapPoint(center.getX(), center.getY());
     }
 
     /**
@@ -164,17 +202,17 @@ public class MapView extends Region {
      * @param seconds the time the move should take
      */
     public void flyTo(double waitTime, MapPoint mapPoint, double seconds) {
-        if ((t != null) && (t.getStatus() == Status.RUNNING)) {
-            t.stop();
+        if ((timeline != null) && (timeline.getStatus() == Status.RUNNING)) {
+            timeline.stop();
         }
         double currentLat = baseMap.centerLat().get();
         double currentLon = baseMap.centerLon().get();
-        t = new Timeline(
+        timeline = new Timeline(
             new KeyFrame(Duration.ZERO, new KeyValue(baseMap.prefCenterLat(), currentLat), new KeyValue(baseMap.prefCenterLon(), currentLon)),
             new KeyFrame(Duration.seconds(waitTime), new KeyValue(baseMap.prefCenterLat(), currentLat), new KeyValue(baseMap.prefCenterLon(), currentLon)),
             new KeyFrame(Duration.seconds(waitTime + seconds), new KeyValue(baseMap.prefCenterLat(), mapPoint.getLatitude()), new KeyValue(baseMap.prefCenterLon(), mapPoint.getLongitude(), Interpolator.EASE_BOTH))
         );
-        t.play();
+        timeline.play();
     }
 
     private boolean dirty = false;

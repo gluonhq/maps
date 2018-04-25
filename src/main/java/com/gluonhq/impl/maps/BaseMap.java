@@ -5,7 +5,7 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -27,6 +27,7 @@
  */
 package com.gluonhq.impl.maps;
 
+import com.gluonhq.maps.MapPoint;
 import com.gluonhq.maps.MapView;
 import com.sun.javafx.tk.Toolkit;
 import javafx.beans.property.DoubleProperty;
@@ -139,6 +140,15 @@ public class BaseMap extends Group {
         prefCenterLon.set(lon);
     }
 
+    public void setCenter(Point2D center) {
+        prefCenterLat.set(center.getX());
+        prefCenterLon.set(center.getY());
+    }
+
+    public Point2D getCenter() {
+        return new Point2D(prefCenterLat.get(), prefCenterLon.get());
+    }
+
     private void doSetCenter(double lat, double lon) {
         this.lat = lat;
         this.lon = lon;
@@ -204,7 +214,15 @@ public class BaseMap extends Group {
         prefZoom.set(z);
         
     }
-    
+
+    /**
+     * Returns the preferred zoom level of this map.
+     * @return the zoom level
+     */
+    public double getZoom() {
+        return prefZoom.get();
+    }
+
     private void doZoom(double z) {
         zoom.set(z);
         doSetCenter(this.lat, this.lon);
@@ -254,6 +272,13 @@ public class BaseMap extends Group {
 
 
 
+    public MapPoint getMapPosition(double sceneX, double sceneY) {
+        final SimpleDoubleProperty _lat = new SimpleDoubleProperty();
+        final SimpleDoubleProperty _lon = new SimpleDoubleProperty();
+        calculateCoords(sceneX - getTranslateX(), sceneY - getTranslateY(), _lat, _lon);  
+        return new MapPoint(_lat.get(), _lon.get());
+    }
+    
     public Point2D getMapPoint(double lat, double lon) {
         return getMapPoint(zoom.get(), lat, lon);
     }
@@ -471,12 +496,16 @@ public class BaseMap extends Group {
     private void calculateCenterCoords() {
         double x = ((MapView)this.getParent()).getWidth()/2-this.getTranslateX();
         double y = ((MapView)this.getParent()).getHeight()/2 - this.getTranslateY();
+        calculateCoords(x, y, centerLat, centerLon);
+    }
+    
+    private void calculateCoords(double x, double y, SimpleDoubleProperty lat, SimpleDoubleProperty lon) {        
         double z = zoom.get();
         double latrad = Math.PI - (2.0 * Math.PI * y) / (Math.pow(2, z)*256.);
         double mlat = Math.toDegrees(Math.atan(Math.sinh(latrad)));
         double mlon = x / (256*Math.pow(2, z)) * 360 - 180;
-        centerLon.set(mlon);
-        centerLat.set(mlat);
+        lon.set(mlon);
+        lat.set(mlat);
     }
     
     /**
