@@ -25,13 +25,11 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.gluonhq.impl.maps;
+package com.gluonhq.impl.maps.tile.osm;
 
 import com.gluonhq.charm.down.Services;
 import com.gluonhq.charm.down.plugins.StorageService;
-import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -49,25 +47,21 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- *
- */
-public class ImageRetriever {
+public class CachedOsmTileRetriever extends OsmTileRetriever {
 
-    private static final Logger logger = Logger.getLogger( ImageRetriever.class.getName() );
+    private static final Logger logger = Logger.getLogger(CachedOsmTileRetriever.class.getName());
     private static final int TIMEOUT = 5000;
 
-    static String host = "http://tile.openstreetmap.org/";
     static File cacheRoot;
-    static boolean hasFileCache = false;
-    static CacheThread cacheThread = null;
+    static boolean hasFileCache;
+    static CachedOsmTileRetriever.CacheThread cacheThread = null;
 
     static {
         try {
             File storageRoot = Services.get(StorageService.class)
                     .flatMap(StorageService::getPrivateStorage)
                     .orElseThrow(() -> new IOException("Storage Service is not available"));
-            
+
             cacheRoot = new File(storageRoot, ".gluonmaps");
             logger.fine("[JVDBG] cacheroot = " + cacheRoot);
             if (!cacheRoot.isDirectory()) {
@@ -76,7 +70,7 @@ public class ImageRetriever {
                 hasFileCache = true;
             }
             if (hasFileCache) {
-                cacheThread = new CacheThread(cacheRoot.getPath());
+                cacheThread = new CachedOsmTileRetriever.CacheThread(cacheRoot.getPath());
                 cacheThread.start();
             }
             logger.info("hasfilecache = " + hasFileCache);
@@ -92,23 +86,22 @@ public class ImageRetriever {
         return thread;
     });
 
-    static ReadOnlyDoubleProperty fillImage(ImageView imageView, int zoom, long i, long j) {
+    @Override
+    public Image loadTile(int zoom, long i, long j) {
         Image image = fromFileCache(zoom, i, j);
         if (image == null) {
-            String urlString = host + zoom + "/" + i + "/" + j + ".png";
             if (hasFileCache) {
                 EXECUTOR.execute(() -> {
                     try {
-                        cacheThread.cacheImage(urlString, zoom, i, j);
+                        cacheThread.cacheImage(zoom, i, j);
                     } catch (Throwable ex) {
                         logger.log(Level.SEVERE, null, ex);
                     }
                 });
             }
-            image = new Image(urlString, true);
+            image = super.loadTile(zoom, i, j);
         }
-        imageView.setImage(image);
-        return image.progressProperty();
+        return image;
     }
 
     /**
@@ -169,8 +162,8 @@ public class ImageRetriever {
             }
         }
 
-        public void cacheImage(String url, int zoom, long i, long j) {
-            String key = url + ";" + zoom + "/" + i + "/" + j;
+        public void cacheImage(int zoom, long i, long j) {
+            String key = buildImageUrlString(zoom, i, j) + ";" + zoom + "/" + i + "/" + j;
             synchronized (offered) {
                 if (!offered.contains(key)) {
                     offered.add(key);
@@ -221,5 +214,4 @@ public class ImageRetriever {
             }
         }
     }
-
 }

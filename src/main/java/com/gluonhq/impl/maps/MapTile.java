@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Gluon
+ * Copyright (c) 2016 - 2018, Gluon
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,11 +27,13 @@
  */
 package com.gluonhq.impl.maps;
 
+import com.gluonhq.maps.tile.TileRetrieverProvider;
+import com.gluonhq.maps.tile.TileRetriever;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.WeakInvalidationListener;
 import javafx.beans.property.ReadOnlyDoubleProperty;
-import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Region;
 import javafx.scene.transform.Scale;
@@ -48,10 +50,10 @@ import static java.lang.Math.floor;
 class MapTile extends Region {
 
     private static final Logger logger = Logger.getLogger( MapTile.class.getName() );
+    private static final TileRetriever TILE_RETRIEVER = TileRetrieverProvider.getInstance().load();
 
     final int myZoom;
     final long i, j;
-    String host = "http://tile.openstreetmap.org/";
     final BaseMap baseMap;
     // a list of tiles that this tile is covering. In case the covered tiles are 
     // not yet loaded, this tile will be rendered.
@@ -80,12 +82,14 @@ class MapTile extends Region {
         getTransforms().add(scale);
         debug("[JVDBG] load image [" + myZoom + "], i = " + i + ", j = " + j);
 
-        ImageView iv = new ImageView();
-        iv.setMouseTransparent(true);
-        this.progress = ImageRetriever.fillImage(iv, myZoom, i, j);
+        ImageView imageView = new ImageView();
+        imageView.setMouseTransparent(true);
+        Image tile = TILE_RETRIEVER.loadTile(myZoom, i, j);
+        imageView.setImage(tile);
+        this.progress = tile.progressProperty();
 
 //        Label l = new Label("Tile [" + myZoom + "], i = " + i + ", j = " + j);
-        getChildren().addAll(iv);//,l);
+        getChildren().addAll(imageView);//,l);
         this.progress.addListener(o -> {
             if (this.progress.get() == 1.) {
                 debug("[JVDBG] got image  [" + myZoom + "], i = " + i + ", j = " + j);
