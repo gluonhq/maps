@@ -5,7 +5,7 @@ This sample demonstrates how to use Gluon Maps inside a mobile application.
 
 ## Instructions
 
-To execute any of the samples, do as follows:
+To execute this sample, do as follows:
 
 * Android
 > Connect your Android device and run `./gradlew androidInstall`
