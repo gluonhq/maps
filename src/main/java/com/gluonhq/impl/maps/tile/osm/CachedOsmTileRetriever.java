@@ -54,7 +54,7 @@ public class CachedOsmTileRetriever extends OsmTileRetriever {
 
     static File cacheRoot;
     static boolean hasFileCache;
-    static CachedOsmTileRetriever.CacheThread cacheThread = null;
+    static CacheThread cacheThread = null;
 
     static {
         try {
@@ -70,7 +70,7 @@ public class CachedOsmTileRetriever extends OsmTileRetriever {
                 hasFileCache = true;
             }
             if (hasFileCache) {
-                cacheThread = new CachedOsmTileRetriever.CacheThread(cacheRoot.getPath());
+                cacheThread = new CacheThread(cacheRoot.getPath());
                 cacheThread.start();
             }
             logger.info("hasfilecache = " + hasFileCache);
