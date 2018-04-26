@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Gluon
+ * Copyright (c) 2018, Gluon
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.gluonhq.maps.demo;
+package com.gluonhq.maps.samples.mobile;
 
 import com.gluonhq.charm.down.Platform;
 import com.gluonhq.charm.down.Services;
@@ -45,36 +45,32 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
+
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
-/**
- *
- * Demo class showing a simple map app
- */
-public class DemoMap extends Application {
+public class MobileSample extends Application {
 
-    private static final Logger LOGGER = Logger.getLogger(DemoMap.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(MobileSample.class.getName());
 
     static {
         try {
-            LogManager.getLogManager().readConfiguration(DemoMap.class.getResourceAsStream("/logging.properties"));
+            LogManager.getLogManager().readConfiguration(MobileSample.class.getResourceAsStream("/logging.properties"));
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Error reading logging properties file", e);
         }
     }
-    
-    private MapPoint mapPoint;
-            
-    @Override
-    public void start(Stage stage) throws Exception {
 
+    private MapPoint mapPoint;
+
+    @Override
+    public void start(Stage stage) {
         MapView view = new MapView();
         view.addLayer(positionLayer());
-        view.setZoom(3); 
+        view.setZoom(3);
         Scene scene;
         if (Platform.isDesktop()) {
             scene = new Scene(view, 600, 700);
@@ -95,27 +91,20 @@ public class DemoMap extends Application {
 
         view.flyTo(1., mapPoint, 2.);
     }
-    
-//    private MapLayer myDemoLayer () {
-//        PoiLayer answer = new PoiLayer();
-//        Node icon1 = new Circle(7, Color.BLUE);
-//        answer.addPoint(new MapPoint(50.8458,4.724), icon1);
-//        Node icon2 = new Circle(7, Color.GREEN);
-//        answer.addPoint(new MapPoint(37.396256,-121.953847), icon2);
-//        return answer;
-//    }
-    
+
     private MapLayer positionLayer() {
         return Services.get(PositionService.class)
                 .map(positionService -> {
+                    positionService.start();
+
                     ReadOnlyObjectProperty<Position> positionProperty = positionService.positionProperty();
                     Position position = positionProperty.get();
                     if (position == null) {
-                        position = new Position(50.,4.);
+                        position = new Position(50., 4.);
                     }
                     mapPoint = new MapPoint(position.getLatitude(), position.getLongitude());
                     LOGGER.log(Level.INFO, "Initial Position: " + position.getLatitude() + ", " + position.getLongitude());
-                        
+
                     PoiLayer answer = new PoiLayer();
                     answer.addPoint(mapPoint, new Circle(7, Color.RED));
 

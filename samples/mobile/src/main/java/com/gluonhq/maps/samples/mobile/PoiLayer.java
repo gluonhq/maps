@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2018, Gluon
+ * Copyright (c) 2016, Gluon
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,40 +25,44 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package com.gluonhq.maps.samples.mobile;
 
-buildscript {
-    repositories {
-        jcenter()
+import com.gluonhq.maps.MapLayer;
+import com.gluonhq.maps.MapPoint;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.geometry.Point2D;
+import javafx.scene.Node;
+import javafx.util.Pair;
+
+/**
+ *
+ * A layer that allows to visualise points of interest.
+ */
+public class PoiLayer extends MapLayer {
+
+
+    private final ObservableList<Pair<MapPoint, Node>> points = FXCollections.observableArrayList();
+    
+    public PoiLayer() {
     }
-    dependencies {
-        classpath 'com.github.ben-manes:gradle-versions-plugin:0.13.0'
-        classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.11.0'
-        classpath 'net.nemerosa:versioning:2.5.0'
+
+    public void addPoint(MapPoint p, Node icon) {
+        points.add(new Pair(p, icon));
+        this.getChildren().add(icon);
+        this.markDirty();
     }
-}
 
-apply plugin: 'java'
-apply plugin: 'com.github.ben-manes.versions'
-apply plugin: 'maven'
-apply plugin: 'net.nemerosa.versioning'
-apply from: rootProject.file('mavenPublish.gradle')
-apply from: rootProject.file('gradle/publishing.gradle')
-apply from: rootProject.file('gradle/code-quality.gradle')
+    @Override
+    protected void layoutLayer() {
+        for (Pair<MapPoint, Node> candidate : points) {
+            MapPoint point = candidate.getKey();
+            Node icon = candidate.getValue();
+            Point2D mapPoint = baseMap.getMapPoint(point.getLatitude(), point.getLongitude());
+            icon.setVisible(true);
+            icon.setTranslateX(mapPoint.getX());
+            icon.setTranslateY(mapPoint.getY());
+        }
+    }
 
-dependencies {
-    compile 'com.gluonhq:charm-down-plugin-storage:3.8.0'
-}
-
-task sourcesJar (type: Jar) {
-    from sourceSets.main.allSource
-    classifier = 'sources'
-}
-
-task javadocJar (type: Jar, dependsOn: javadoc) {
-    from javadoc.destinationDir
-    classifier = 'javadoc'
-}
-
-artifacts {
-    archives sourcesJar, javadocJar
 }

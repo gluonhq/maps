@@ -3,11 +3,11 @@
 <plist version="1.0">
 <dict>
         <key>CFBundleIdentifier</key>
-        <string>com.gluonhq.GluonMap</string>
+        <string>com.gluonhq.maps.samples.mobile</string>
         <key>CFBundleVersion</key>
         <string>1.0</string>
         <key>CFBundleExecutable</key>
-        <string>GluonMap</string>
+        <string>GluonMapsMobileSample</string>
         <key>CFBundleIconFiles</key>
         <array>
                 <string>Icon-60</string>
@@ -22,7 +22,7 @@
                 <string>Icon-Small</string>
         </array>
         <key>CFBundleName</key>
-        <string>GluonMap</string>
+        <string>GluonMapsMobileSample</string>
         <key>CFBundlePackageType</key>
         <string>APPL</string>
         <key>LSRequiresIPhoneOS</key>
@@ -63,8 +63,8 @@
             </dict>
         </dict>
         <key>NSLocationUsageDescription</key>
-        <string>Gluon Maps requires Location Service enabled</string>
+        <string>Gluon Maps Mobile Sample requires Location Service enabled</string>
         <key>NSLocationWhenInUseUsageDescription</key>
-        <string>Gluon Maps requires Location Service enabled</string>
+        <string>Gluon Maps Mobile Sample requires Location Service enabled</string>
 </dict>
 </plist>
