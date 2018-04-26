@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Gluon
+ * Copyright (c) 2016, 2018, Gluon
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,11 +27,13 @@
  */
 package com.gluonhq.impl.maps;
 
+import com.gluonhq.maps.tile.TileRetrieverProvider;
+import com.gluonhq.maps.tile.TileRetriever;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.WeakInvalidationListener;
 import javafx.beans.property.ReadOnlyDoubleProperty;
-import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Region;
 import javafx.scene.transform.Scale;
@@ -48,19 +50,19 @@ import static java.lang.Math.floor;
 class MapTile extends Region {
 
     private static final Logger logger = Logger.getLogger( MapTile.class.getName() );
+    private static final TileRetriever TILE_RETRIEVER = TileRetrieverProvider.getInstance().load();
 
     final int myZoom;
     final long i, j;
-    String host = "http://tile.openstreetmap.org/";
-    final BaseMap baseMap;
+    private final BaseMap baseMap;
     // a list of tiles that this tile is covering. In case the covered tiles are 
     // not yet loaded, this tile will be rendered.
-    final List<MapTile> coveredTiles = new LinkedList();
+    private final List<MapTile> coveredTiles = new LinkedList<>();
     /**
      * In most cases, a tile will be shown scaled. The value for the scale
      * factor depends on the active zoom and the tile-specific myZoom
      */
-    final Scale scale = new Scale();
+    private final Scale scale = new Scale();
 
     public boolean isCovering() {
         return coveredTiles.size() > 0;
@@ -69,7 +71,6 @@ class MapTile extends Region {
     private final InvalidationListener zl = o -> calculatePosition();
     private ReadOnlyDoubleProperty progress;
 
-    // final Image image;
     MapTile(BaseMap baseMap, int nearestZoom, long i, long j) {
         this.baseMap = baseMap;
         this.myZoom = nearestZoom;
@@ -80,16 +81,22 @@ class MapTile extends Region {
         getTransforms().add(scale);
         debug("[JVDBG] load image [" + myZoom + "], i = " + i + ", j = " + j);
 
-        ImageView iv = new ImageView();
-        iv.setMouseTransparent(true);
-        this.progress = ImageRetriever.fillImage(iv, myZoom, i, j);
+        ImageView imageView = new ImageView();
+        imageView.setMouseTransparent(true);
+        Image tile = TILE_RETRIEVER.loadTile(myZoom, i, j);
+        imageView.setImage(tile);
+        this.progress = tile.progressProperty();
 
 //        Label l = new Label("Tile [" + myZoom + "], i = " + i + ", j = " + j);
-        getChildren().addAll(iv);//,l);
-        this.progress.addListener(o -> {
-            if (this.progress.get() == 1.) {
-                debug("[JVDBG] got image  [" + myZoom + "], i = " + i + ", j = " + j);
-                this.setNeedsLayout(true);
+        getChildren().addAll(imageView);//,l);
+        this.progress.addListener(new InvalidationListener() {
+            @Override
+            public void invalidated(Observable observable) {
+                if (progress.get() >= 1.0d) {
+                    debug("[JVDBG] got image [" + myZoom + "], i = " + i + ", j = " + j);
+                    setNeedsLayout(true);
+                    progress.removeListener(this);
+                }
             }
         });
         baseMap.zoom().addListener(new WeakInvalidationListener(zl));
@@ -145,7 +152,7 @@ class MapTile extends Region {
         calculatePosition();
     }
 
-    InvalidationListener createProgressListener(MapTile child) {
+    private InvalidationListener createProgressListener(MapTile child) {
         return new InvalidationListener() {
             @Override
             public void invalidated(Observable o) {
@@ -157,7 +164,7 @@ class MapTile extends Region {
         };
     }
 
-    public void debug(String s) {
+    private void debug(String s) {
         logger.fine("LOG " + System.currentTimeMillis() % 10000 + ": " + s);
     }
 }
