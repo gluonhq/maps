@@ -45,6 +45,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
+
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
@@ -62,15 +63,14 @@ public class MobileSample extends Application {
             LOGGER.log(Level.SEVERE, "Error reading logging properties file", e);
         }
     }
-    
-    private MapPoint mapPoint;
-            
-    @Override
-    public void start(Stage stage) throws Exception {
 
+    private MapPoint mapPoint;
+
+    @Override
+    public void start(Stage stage) {
         MapView view = new MapView();
         view.addLayer(positionLayer());
-        view.setZoom(3); 
+        view.setZoom(3);
         Scene scene;
         if (Platform.isDesktop()) {
             scene = new Scene(view, 600, 700);
@@ -95,14 +95,16 @@ public class MobileSample extends Application {
     private MapLayer positionLayer() {
         return Services.get(PositionService.class)
                 .map(positionService -> {
+                    positionService.start();
+
                     ReadOnlyObjectProperty<Position> positionProperty = positionService.positionProperty();
                     Position position = positionProperty.get();
                     if (position == null) {
-                        position = new Position(50.,4.);
+                        position = new Position(50., 4.);
                     }
                     mapPoint = new MapPoint(position.getLatitude(), position.getLongitude());
                     LOGGER.log(Level.INFO, "Initial Position: " + position.getLatitude() + ", " + position.getLongitude());
-                        
+
                     PoiLayer answer = new PoiLayer();
                     answer.addPoint(mapPoint, new Circle(7, Color.RED));
 
