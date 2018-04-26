@@ -54,15 +54,15 @@ class MapTile extends Region {
 
     final int myZoom;
     final long i, j;
-    final BaseMap baseMap;
+    private final BaseMap baseMap;
     // a list of tiles that this tile is covering. In case the covered tiles are 
     // not yet loaded, this tile will be rendered.
-    final List<MapTile> coveredTiles = new LinkedList();
+    private final List<MapTile> coveredTiles = new LinkedList<>();
     /**
      * In most cases, a tile will be shown scaled. The value for the scale
      * factor depends on the active zoom and the tile-specific myZoom
      */
-    final Scale scale = new Scale();
+    private final Scale scale = new Scale();
 
     public boolean isCovering() {
         return coveredTiles.size() > 0;
@@ -71,7 +71,6 @@ class MapTile extends Region {
     private final InvalidationListener zl = o -> calculatePosition();
     private ReadOnlyDoubleProperty progress;
 
-    // final Image image;
     MapTile(BaseMap baseMap, int nearestZoom, long i, long j) {
         this.baseMap = baseMap;
         this.myZoom = nearestZoom;
@@ -90,10 +89,14 @@ class MapTile extends Region {
 
 //        Label l = new Label("Tile [" + myZoom + "], i = " + i + ", j = " + j);
         getChildren().addAll(imageView);//,l);
-        this.progress.addListener(o -> {
-            if (this.progress.get() == 1.) {
-                debug("[JVDBG] got image  [" + myZoom + "], i = " + i + ", j = " + j);
-                this.setNeedsLayout(true);
+        this.progress.addListener(new InvalidationListener() {
+            @Override
+            public void invalidated(Observable observable) {
+                if (progress.get() >= 1.0d) {
+                    debug("[JVDBG] got image [" + myZoom + "], i = " + i + ", j = " + j);
+                    setNeedsLayout(true);
+                    progress.removeListener(this);
+                }
             }
         });
         baseMap.zoom().addListener(new WeakInvalidationListener(zl));
@@ -149,7 +152,7 @@ class MapTile extends Region {
         calculatePosition();
     }
 
-    InvalidationListener createProgressListener(MapTile child) {
+    private InvalidationListener createProgressListener(MapTile child) {
         return new InvalidationListener() {
             @Override
             public void invalidated(Observable o) {
@@ -161,7 +164,7 @@ class MapTile extends Region {
         };
     }
 
-    public void debug(String s) {
+    private void debug(String s) {
         logger.fine("LOG " + System.currentTimeMillis() % 10000 + ": " + s);
     }
 }
