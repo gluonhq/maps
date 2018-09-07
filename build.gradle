@@ -37,6 +37,17 @@ buildscript {
     }
 }
 
+def currentOS = org.gradle.internal.os.OperatingSystem.current();
+def classifier
+if (currentOS.isWindows()) {
+    classifier = 'win'
+} else if (currentOS.isLinux()) {
+    classifier = 'linux'
+} else if (currentOS.isMacOsX()) {
+    classifier = 'mac'
+}
+
+
 apply plugin: 'java'
 apply plugin: 'com.github.ben-manes.versions'
 apply plugin: 'maven'
@@ -47,6 +58,9 @@ apply from: rootProject.file('gradle/code-quality.gradle')
 
 dependencies {
     compile 'com.gluonhq:charm-down-plugin-storage:3.8.0'
+    compile "org.openjfx:javafx-controls:11-ea+23:$classifier"
+    compile "org.openjfx:javafx-graphics:11-ea+23:$classifier"
+    compile "org.openjfx:javafx-base:11-ea+23:$classifier"
 }
 
 task sourcesJar (type: Jar) {
