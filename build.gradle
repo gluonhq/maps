@@ -63,9 +63,25 @@ dependencies {
     compile "org.openjfx:javafx-base:11-ea+23:$classifier"
 }
 
+compileJava {
+    doFirst {
+        options.compilerArgs = [
+            '--module-path', classpath.asPath,
+            '--add-modules', 'javafx.controls',
+            '--add-modules', 'charm.down.plugin.storage'
+        ]
+        classpath = sourceSets.main.compileClasspath
+    }
+}
+
+
 task sourcesJar (type: Jar) {
     from sourceSets.main.allSource
     classifier = 'sources'
+}
+
+javadoc {
+    exclude 'module-info.java'
 }
 
 task javadocJar (type: Jar, dependsOn: javadoc) {
