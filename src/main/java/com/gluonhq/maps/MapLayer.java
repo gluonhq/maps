@@ -29,6 +29,8 @@ package com.gluonhq.maps;
 
 import com.gluonhq.impl.maps.BaseMap;
 import javafx.scene.Parent;
+import javafx.geometry.Point2D;
+
 
 /**
  * A MapLayer can be added on top a BaseMap (which provides the map tiles).
@@ -52,7 +54,7 @@ public class MapLayer extends Parent {
 
     private boolean dirty = false;
 
-    protected BaseMap baseMap;
+    public BaseMap baseMap;
 
     /**
      * Only the MapView should call this method. We want implementations to
@@ -103,5 +105,8 @@ public class MapLayer extends Parent {
      */
     protected void layoutLayer() {
     }
-
+    
+    public Point2D getMapPoint(double lat, double lon) {
+        return baseMap.getMapPoint(lat, lon);
+    }
 }

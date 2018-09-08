@@ -272,6 +272,10 @@ public class BaseMap extends Group {
 
 
 
+    public MapPoint getMyMapPosition(double sceneX, double sceneY) {
+        return getMapPosition(sceneX, sceneY);
+    }
+
     public MapPoint getMapPosition(double sceneX, double sceneY) {
         final SimpleDoubleProperty _lat = new SimpleDoubleProperty();
         final SimpleDoubleProperty _lon = new SimpleDoubleProperty();
@@ -280,10 +284,10 @@ public class BaseMap extends Group {
     }
     
     public Point2D getMapPoint(double lat, double lon) {
-        return getMapPoint(zoom.get(), lat, lon);
+        return getMyMapPoint(zoom.get(), lat, lon);
     }
 
-    private Point2D getMapPoint(double zoom, double lat, double lon) {
+    private Point2D getMyMapPoint(double zoom, double lat, double lon) {
         if (this.getScene() == null) {
             return null;
         }

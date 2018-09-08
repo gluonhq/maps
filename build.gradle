@@ -74,7 +74,7 @@ compileJava {
     }
 }
 
-
+/*
 task sourcesJar (type: Jar) {
     from sourceSets.main.allSource
     classifier = 'sources'
@@ -92,3 +92,4 @@ task javadocJar (type: Jar, dependsOn: javadoc) {
 artifacts {
     archives sourcesJar, javadocJar
 }
+*/
