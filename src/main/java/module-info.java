@@ -30,4 +30,6 @@ module com.gluonhq.maps {
     requires java.logging;
     requires charm.down.plugin.storage;
     exports com.gluonhq.maps;
+    exports com.gluonhq.maps.tile;
+    uses com.gluonhq.maps.tile.TileRetriever;
 }
