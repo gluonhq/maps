@@ -37,6 +37,10 @@ buildscript {
     }
 }
 
+repositories {
+    mavenLocal();
+}
+
 def currentOS = org.gradle.internal.os.OperatingSystem.current();
 def classifier
 if (currentOS.isWindows()) {
@@ -57,7 +61,7 @@ apply from: rootProject.file('gradle/publishing.gradle')
 apply from: rootProject.file('gradle/code-quality.gradle')
 
 dependencies {
-    compile 'com.gluonhq:charm-down-plugin-storage:3.8.0'
+    compile 'com.gluonhq:charm-down-plugin-storage:4.0.0-SNAPSHOT'
     compile "org.openjfx:javafx-controls:11-ea+23:$classifier"
     compile "org.openjfx:javafx-graphics:11-ea+23:$classifier"
     compile "org.openjfx:javafx-base:11-ea+23:$classifier"
@@ -65,16 +69,28 @@ dependencies {
 
 compileJava {
     doFirst {
+println("classpath = $classpath.asPath")
         options.compilerArgs = [
             '--module-path', classpath.asPath,
             '--add-modules', 'javafx.controls',
-            '--add-modules', 'charm.down.plugin.storage'
+            '--add-modules', 'com.gluonhq.charm.down.core',
+            '--add-modules', 'com.gluonhq.charm.down.plugins.storage'
         ]
         classpath = sourceSets.main.compileClasspath
     }
 }
-
 /*
+run {
+    doFirst {
+        jvmArgs = [
+            '--module-path', classpath.filter{!it.name.startsWith("javafx-") || it.name.contains("-$classifier")}.asPath,
+            '--add-modules', 'javafx.controls',
+            '--add-modules', 'charm.down.plugin.storage'
+        ]
+        classpath = sourceSets.main.output
+    }
+}
+
 task sourcesJar (type: Jar) {
     from sourceSets.main.allSource
     classifier = 'sources'

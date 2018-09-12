@@ -27,7 +27,7 @@
  */
 package com.gluonhq.maps;
 
-import com.gluonhq.charm.down.Platform;
+import com.gluonhq.charm.down.core.Platform;
 import java.util.LinkedList;
 import java.util.List;
 

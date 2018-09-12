@@ -27,8 +27,8 @@
  */
 package com.gluonhq.impl.maps.tile.osm;
 
-import com.gluonhq.charm.down.Services;
-import com.gluonhq.charm.down.plugins.StorageService;
+import com.gluonhq.charm.down.core.Services;
+import com.gluonhq.charm.down.plugins.storage.StorageService;
 import javafx.scene.image.Image;
 
 import java.io.File;

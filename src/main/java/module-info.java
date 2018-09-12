@@ -28,7 +28,8 @@
 module com.gluonhq.maps {
     requires javafx.controls;
     requires java.logging;
-    requires charm.down.plugin.storage;
+    requires transitive com.gluonhq.charm.down.plugins.storage;
+    requires com.gluonhq.charm.down.core;
     exports com.gluonhq.maps;
     exports com.gluonhq.maps.tile;
     uses com.gluonhq.maps.tile.TileRetriever;
