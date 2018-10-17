@@ -270,12 +270,6 @@ public class BaseMap extends Group {
         logger.fine("after, zp = " + zoom.get() + ", tx = " + getTranslateX());
     }
 
-
-
-    public MapPoint getMyMapPosition(double sceneX, double sceneY) {
-        return getMapPosition(sceneX, sceneY);
-    }
-
     public MapPoint getMapPosition(double sceneX, double sceneY) {
         final SimpleDoubleProperty _lat = new SimpleDoubleProperty();
         final SimpleDoubleProperty _lon = new SimpleDoubleProperty();
