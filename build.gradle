@@ -62,14 +62,13 @@ apply from: rootProject.file('gradle/code-quality.gradle')
 
 dependencies {
     compile 'com.gluonhq:charm-down-plugin-storage:4.0.0-SNAPSHOT'
-    compile "org.openjfx:javafx-controls:11-ea+23:$classifier"
-    compile "org.openjfx:javafx-graphics:11-ea+23:$classifier"
-    compile "org.openjfx:javafx-base:11-ea+23:$classifier"
+    compile "org.openjfx:javafx-controls:11:$classifier"
+    compile "org.openjfx:javafx-graphics:11:$classifier"
+    compile "org.openjfx:javafx-base:11:$classifier"
 }
 
 compileJava {
     doFirst {
-println("classpath = $classpath.asPath")
         options.compilerArgs = [
             '--module-path', classpath.asPath,
             '--add-modules', 'javafx.controls',
