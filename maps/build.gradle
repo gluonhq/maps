@@ -42,13 +42,6 @@ repositories {
     maven {
         url 'http://nexus.gluonhq.com/nexus/content/repositories/public-snapshots/'
     }
-    maven {
-        url 'http://nexus.gluonhq.com/nexus/content/repositories/snapshots'
-        credentials {
-            username gluonNexusUsername
-            password gluonNexusPassword
-        }
-    }
 }
 
 dependencies {

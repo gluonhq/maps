@@ -48,7 +48,7 @@ public class PoiLayer extends MapLayer {
     }
 
     public void addPoint(MapPoint p, Node icon) {
-        points.add(new Pair(p, icon));
+        points.add(new Pair<>(p, icon));
         this.getChildren().add(icon);
         this.markDirty();
     }
