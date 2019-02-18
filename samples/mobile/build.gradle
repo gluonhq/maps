@@ -26,42 +26,33 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath 'org.javafxports:jfxmobile-plugin:1.3.10'
-    }
+plugins {
+    id 'application'
 }
-
-apply plugin: 'org.javafxports.jfxmobile'
 
 repositories {
     mavenCentral()
+    maven {
+        url 'http://nexus.gluonhq.com/nexus/content/repositories/public-snapshots/'
+    }
+    maven {
+        url 'http://nexus.gluonhq.com/nexus/content/repositories/snapshots'
+        credentials {
+            username gluonNexusUsername
+            password gluonNexusPassword
+        }
+    }
 }
 
 dependencies {
-    compile 'com.gluonhq:maps:1.0.2'
+    implementation project(':maps')
+    implementation 'com.gluonhq.attach:storage:4.0.0-SNAPSHOT:desktop'
+    implementation 'com.gluonhq.attach:position:4.0.0-SNAPSHOT'
+    implementation 'com.gluonhq.attach:util:4.0.0-SNAPSHOT'
 }
 
-mainClassName = 'com.gluonhq.maps.samples.mobile.MobileSample'
-
-jfxmobile {
-    downConfig {
-        version = "3.8.0"
-        plugins 'position', 'storage'
-    }
-    android {
-        manifest = 'src/android/AndroidManifest.xml'
-        packagingOptions {
-            exclude 'logging.properties'
-        }
-    }
-    ios {
-        infoPList = file('src/ios/Default-Info.plist')
-        forceLinkClasses = [
-            'com.gluonhq.**.*'
-        ]
-    }
+javafx {
+    modules "javafx.controls"
 }
+
+mainClassName = "$moduleName/com.gluonhq.maps.samples.mobile.MobileSample"

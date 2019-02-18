@@ -27,8 +27,7 @@
  */
 package com.gluonhq.impl.maps.tile.osm;
 
-import com.gluonhq.charm.down.Services;
-import com.gluonhq.charm.down.plugins.StorageService;
+import com.gluonhq.attach.storage.StorageService;
 import javafx.scene.image.Image;
 
 import java.io.File;
@@ -58,7 +57,7 @@ public class CachedOsmTileRetriever extends OsmTileRetriever {
 
     static {
         try {
-            File storageRoot = Services.get(StorageService.class)
+            File storageRoot = StorageService.create()
                     .flatMap(StorageService::getPrivateStorage)
                     .orElseThrow(() -> new IOException("Storage Service is not available"));
 

@@ -28,6 +28,7 @@
 package com.gluonhq.maps;
 
 import com.gluonhq.impl.maps.BaseMap;
+import javafx.geometry.Point2D;
 import javafx.scene.Parent;
 
 /**
@@ -102,6 +103,17 @@ public class MapLayer extends Parent {
      * layers to add layer-specific rendering.
      */
     protected void layoutLayer() {
+    }
+
+    /**
+     * This method returns a point in pixel coordinates for a given latitude and
+     * longitude coordinates
+     * @param lat the latitude
+     * @param lon the longitude
+     * @return a Point2D in pixels
+     */
+    protected final Point2D getMapPoint(double lat, double lon) {
+        return baseMap.getMapPoint(lat, lon);
     }
 
 }
