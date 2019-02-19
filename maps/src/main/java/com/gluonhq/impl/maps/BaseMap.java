@@ -29,7 +29,7 @@ package com.gluonhq.impl.maps;
 
 import com.gluonhq.maps.MapPoint;
 import com.gluonhq.maps.MapView;
-import com.sun.javafx.tk.Toolkit;
+import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
@@ -519,7 +519,7 @@ public class BaseMap extends Group {
         this.dirty = true;
         calculateCenterCoords();
         this.setNeedsLayout(true);
-        Toolkit.getToolkit().requestNextPulse();
+        Platform.requestNextPulse();
     }
 
     private double getMyWidth() {

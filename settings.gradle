@@ -26,4 +26,19 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+pluginManagement {
+    repositories {
+        maven {
+            url 'https://plugins.gradle.org/m2/'
+        }
+    }
+}
+
 rootProject.name = 'maps'
+
+include 'maps'
+include 'mobile'
+
+project(':maps').projectDir = file('maps')
+project(':mobile').projectDir = file('samples/mobile')
+

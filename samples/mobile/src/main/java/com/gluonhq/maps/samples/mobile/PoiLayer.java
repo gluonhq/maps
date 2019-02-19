@@ -48,7 +48,7 @@ public class PoiLayer extends MapLayer {
     }
 
     public void addPoint(MapPoint p, Node icon) {
-        points.add(new Pair(p, icon));
+        points.add(new Pair<>(p, icon));
         this.getChildren().add(icon);
         this.markDirty();
     }
@@ -58,7 +58,7 @@ public class PoiLayer extends MapLayer {
         for (Pair<MapPoint, Node> candidate : points) {
             MapPoint point = candidate.getKey();
             Node icon = candidate.getValue();
-            Point2D mapPoint = baseMap.getMapPoint(point.getLatitude(), point.getLongitude());
+            Point2D mapPoint = getMapPoint(point.getLatitude(), point.getLongitude());
             icon.setVisible(true);
             icon.setTranslateX(mapPoint.getX());
             icon.setTranslateY(mapPoint.getY());

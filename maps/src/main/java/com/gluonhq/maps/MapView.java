@@ -27,10 +27,10 @@
  */
 package com.gluonhq.maps;
 
-import com.gluonhq.charm.down.Platform;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.gluonhq.attach.util.Platform;
 import com.gluonhq.impl.maps.BaseMap;
 import javafx.animation.Animation.Status;
 import javafx.animation.Interpolator;
