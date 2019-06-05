@@ -39,9 +39,9 @@ repositories {
 
 dependencies {
     implementation project(':maps')
-    implementation 'com.gluonhq.attach:storage:4.0.0-SNAPSHOT:desktop'
-    implementation 'com.gluonhq.attach:position:4.0.0-SNAPSHOT'
-    implementation 'com.gluonhq.attach:util:4.0.0-SNAPSHOT'
+    implementation 'com.gluonhq.attach:storage:4.0.1.1:desktop'
+    implementation 'com.gluonhq.attach:position:4.0.1.1'
+    implementation 'com.gluonhq.attach:util:4.0.1.1'
 }
 
 javafx {

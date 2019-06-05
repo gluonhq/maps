@@ -40,13 +40,13 @@ apply from: rootProject.file('gradle/code-quality.gradle')
 repositories {
     mavenCentral()
     maven {
-        url 'http://nexus.gluonhq.com/nexus/content/repositories/public-snapshots/'
+        url 'http://nexus.gluonhq.com/nexus/content/repositories/releases/'
     }
 }
 
 dependencies {
-    compileOnly 'com.gluonhq.attach:storage:4.0.0-SNAPSHOT'
-    compileOnly 'com.gluonhq.attach:util:4.0.0-SNAPSHOT'
+    compileOnly 'com.gluonhq.attach:storage:4.0.1.1'
+    compileOnly 'com.gluonhq.attach:util:4.0.1.1'
 }
 
 javafx {
