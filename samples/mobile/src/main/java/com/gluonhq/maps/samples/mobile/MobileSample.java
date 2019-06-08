@@ -27,14 +27,15 @@
  */
 package com.gluonhq.maps.samples.mobile;
 
-import com.gluonhq.charm.down.Platform;
-import com.gluonhq.charm.down.Services;
-import com.gluonhq.charm.down.plugins.Position;
-import com.gluonhq.charm.down.plugins.PositionService;
+import com.gluonhq.attach.position.Position;
+import com.gluonhq.attach.position.PositionService;
+import com.gluonhq.attach.util.Platform;
+import com.gluonhq.attach.util.Services;
 import com.gluonhq.maps.MapLayer;
 import com.gluonhq.maps.MapPoint;
 import com.gluonhq.maps.MapView;
 import javafx.application.Application;
+import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
@@ -46,7 +47,6 @@ import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
-import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;

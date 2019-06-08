@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2018, Gluon
+ * Copyright (c) 2016, 2019, Gluon
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,39 +26,28 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-buildscript {
+plugins {
+    id 'java'
+    id 'org.openjfx.javafxplugin' version '0.0.7' apply false
+}
+
+apply plugin: 'base'
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'org.openjfx.javafxplugin'
+    group = 'com.gluonhq'
+
+    sourceCompatibility = '1.11'
+    [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
     repositories {
-        jcenter()
+        mavenCentral()
+        maven {
+            url "http://nexus.gluonhq.com/nexus/content/repositories/releases/"
+        }
+        maven {
+            url "https://oss.sonatype.org/content/repositories/snapshots/"
+        }
     }
-    dependencies {
-        classpath 'com.github.ben-manes:gradle-versions-plugin:0.13.0'
-        classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.11.0'
-        classpath 'net.nemerosa:versioning:2.5.0'
-    }
-}
-
-apply plugin: 'java'
-apply plugin: 'com.github.ben-manes.versions'
-apply plugin: 'maven'
-apply plugin: 'net.nemerosa.versioning'
-apply from: rootProject.file('mavenPublish.gradle')
-apply from: rootProject.file('gradle/publishing.gradle')
-apply from: rootProject.file('gradle/code-quality.gradle')
-
-dependencies {
-    compile 'com.gluonhq:charm-down-plugin-storage:3.8.0'
-}
-
-task sourcesJar (type: Jar) {
-    from sourceSets.main.allSource
-    classifier = 'sources'
-}
-
-task javadocJar (type: Jar, dependsOn: javadoc) {
-    from javadoc.destinationDir
-    classifier = 'javadoc'
-}
-
-artifacts {
-    archives sourcesJar, javadocJar
 }

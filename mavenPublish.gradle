@@ -99,6 +99,15 @@ private configurePOM(def pom) {
                 url 'http://www.gnu.org/licenses/gpl.txt'
             }
         }
+
+        pom.withXml {
+            Node pomNode = asNode()
+            pomNode.dependencies.'*'.findAll() {
+                it.groupId.text() == 'org.openjfx'
+            }.each {
+                it.remove(it.classifier)
+            }
+        }
     }
 }
 
