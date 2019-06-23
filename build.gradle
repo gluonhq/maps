@@ -33,6 +33,9 @@ plugins {
 
 apply plugin: 'base'
 
+ext.attachVersion = "4.0.2"
+ext.javafxVersion = "12.0.1"
+
 subprojects {
     apply plugin: 'java'
     apply plugin: 'org.openjfx.javafxplugin'

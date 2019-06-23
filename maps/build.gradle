@@ -45,11 +45,12 @@ repositories {
 }
 
 dependencies {
-    compileOnly 'com.gluonhq.attach:storage:4.0.1.1'
-    compileOnly 'com.gluonhq.attach:util:4.0.1.1'
+    compileOnly "com.gluonhq.attach:storage:$attachVersion"
+    compileOnly "com.gluonhq.attach:util:$attachVersion"
 }
 
 javafx {
+    version = "$javafxVersion"
     modules "javafx.controls"
 }
 
