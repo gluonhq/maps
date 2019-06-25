@@ -176,6 +176,7 @@ public class CachedOsmTileRetriever extends OsmTileRetriever {
             try {
                 URL url = new URL(urlString);
                 openConnection = url.openConnection();
+                openConnection.addRequestProperty("User-Agent", httpAgent);
                 openConnection.setConnectTimeout(TIMEOUT);
                 openConnection.setReadTimeout(TIMEOUT);
             } catch (IOException ex) {

@@ -39,12 +39,13 @@ repositories {
 
 dependencies {
     implementation project(':maps')
-    implementation 'com.gluonhq.attach:storage:4.0.1.1:desktop'
-    implementation 'com.gluonhq.attach:position:4.0.1.1'
-    implementation 'com.gluonhq.attach:util:4.0.1.1'
+    implementation "com.gluonhq.attach:storage:$attachVersion:desktop"
+    implementation "com.gluonhq.attach:position:$attachVersion"
+    implementation "com.gluonhq.attach:util:$attachVersion"
 }
 
 javafx {
+    version = "$javafxVersion"
     modules "javafx.controls"
 }
 
