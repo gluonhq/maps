@@ -32,7 +32,17 @@ import javafx.scene.image.Image;
 
 public class OsmTileRetriever implements TileRetriever {
 
-    private static final String host = "http://tile.openstreetmap.org/";
+    private static final String host = "https://tile.openstreetmap.org/";
+    static final String httpAgent;
+    
+    static {
+        String agent = System.getProperty("http.agent");
+        if (agent == null) {
+            agent = "(" + System.getProperty("os.name") + " / " + System.getProperty("os.version") + " / " + System.getProperty("os.arch") + ")";
+        }
+        httpAgent = "Gluon Maps/1.0.4 " + agent;
+        System.setProperty("http.agent", httpAgent);
+    }
 
     static String buildImageUrlString(int zoom, long i, long j) {
         return host + zoom + "/" + i + "/" + j + ".png";
