@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Gluon
+ * Copyright (c) 2016, 2019, Gluon
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@
 apply plugin: 'signing'
 
 configurations {
-    samples { extendsFrom runtime}
+    samples { extendsFrom runtime }
     jdk
     maven { extendsFrom archives }
     published { extendsFrom archives, signatures}
@@ -81,9 +81,9 @@ private configurePOM(def pom) {
         modelVersion '4.0.0'
         packaging 'jar'
         scm {
-            connection 'scm:hg:https://bitbucket.org/gluon-oss/gluon-maps'
-            developerConnection 'scm:hg:https://bitbucket.org/gluon-oss/gluon-maps'
-            url 'https://bitbucket.org/gluon-oss/gluon-maps'
+            connection 'scm:hg:https://github.com/gluonhq/maps'
+            developerConnection 'scm:hg:https://github.org/gluonhq/maps'
+            url 'https://github.org/gluonhq/maps'
         }
         developers {
             developer {
