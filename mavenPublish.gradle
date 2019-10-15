@@ -81,9 +81,9 @@ private configurePOM(def pom) {
         modelVersion '4.0.0'
         packaging 'jar'
         scm {
-            connection 'scm:hg:https://github.com/gluonhq/maps'
-            developerConnection 'scm:hg:https://github.org/gluonhq/maps'
-            url 'https://github.org/gluonhq/maps'
+            connection 'scm:git:https://github.com/gluonhq/maps'
+            developerConnection 'scm:git:https://github.com/gluonhq/maps'
+            url 'https://github.com/gluonhq/maps'
         }
         developers {
             developer {
