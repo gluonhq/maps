@@ -28,13 +28,13 @@
 
 plugins {
     id 'java'
-    id 'org.openjfx.javafxplugin' version '0.0.7' apply false
+    id 'org.openjfx.javafxplugin' version '0.0.8' apply false
 }
 
 apply plugin: 'base'
 
-ext.attachVersion = "4.0.2"
-ext.javafxVersion = "12.0.1"
+ext.attachVersion = "4.0.5"
+ext.javafxVersion = "13.0.2"
 
 subprojects {
     apply plugin: 'java'
