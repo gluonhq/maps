@@ -27,9 +27,6 @@
  */
 package com.gluonhq.maps;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import com.gluonhq.attach.util.Platform;
 import com.gluonhq.impl.maps.BaseMap;
 import javafx.animation.Animation.Status;
@@ -41,6 +38,9 @@ import javafx.geometry.Point2D;
 import javafx.scene.layout.Region;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  *
@@ -109,7 +109,10 @@ public class MapView extends Region {
         setOnZoomFinished(t -> zooming = false);
         setOnZoom(t -> baseMap.zoom(t.getZoomFactor() - 1, t.getX(), t.getY()));
         if (Platform.isDesktop()) {
-            setOnScroll(t -> baseMap.zoom(t.getDeltaY() > 1 ? .1 : -.1, t.getX(), t.getY()));
+            setOnScroll(t -> {
+                final double delta = t.getDeltaY() > 1 ? .1 : t.getDeltaY() < -1 ? -.1 : 0;
+                baseMap.zoom(delta, t.getX(), t.getY());
+            });
         }
     }
 
