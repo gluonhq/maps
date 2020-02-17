@@ -41,7 +41,7 @@ subprojects {
     apply plugin: 'org.openjfx.javafxplugin'
     group = 'com.gluonhq'
 
-    sourceCompatibility = '1.11'
+    sourceCompatibility = '11'
     [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
     repositories {

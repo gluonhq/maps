@@ -41,6 +41,7 @@ dependencies {
     implementation project(':maps')
     implementation "com.gluonhq.attach:storage:$attachVersion:desktop"
     implementation "com.gluonhq.attach:position:$attachVersion"
+    implementation "com.gluonhq.attach:lifecycle:$attachVersion"
     implementation "com.gluonhq.attach:util:$attachVersion"
 }
 
