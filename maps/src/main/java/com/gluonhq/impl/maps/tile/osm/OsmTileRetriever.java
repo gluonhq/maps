@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Gluon
+ * Copyright (c) 2018, 2020 Gluon
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,25 +32,10 @@ import com.gluonhq.impl.maps.tile.HttpTileRetriever;
 public class OsmTileRetriever extends HttpTileRetriever {
 
     private static final String host = "http://tile.openstreetmap.org/";
-//    static final String httpAgent;
-
-//    static {
-//        String agent = System.getProperty("http.agent");
-//        if (agent == null) {
-//            agent = "(" + System.getProperty("os.name") + " / " + System.getProperty("os.version") + " / " + System.getProperty("os.arch") + ")";
-//        }
-//        httpAgent = "Gluon Maps/2.0.0 " + agent;
-//        System.setProperty("http.agent", httpAgent);
-//    }
 
     @Override
     public String buildImageUrlString(int zoom, long i, long j) {
         return host + zoom + "/" + i + "/" + j + ".png";
     }
 
-//    @Override
-//    public Image loadTile(int zoom, long i, long j) {
-//        String urlString = buildImageUrlString(zoom, i, j);
-//        return new Image(urlString, true);
-//    }
 }
