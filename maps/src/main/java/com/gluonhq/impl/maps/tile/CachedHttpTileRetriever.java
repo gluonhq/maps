@@ -40,6 +40,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashSet;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.Executor;
@@ -86,7 +87,19 @@ public class CachedHttpTileRetriever implements TileRetriever {
         }
     }
 
-    private final static Executor EXECUTOR = Executors.newFixedThreadPool(2, runnable -> {
+    private static int getThreadNumber() {
+        return Optional.ofNullable(System.getProperty("gluon.maps.thread.number"))
+                        .map(s -> {
+                            try {
+                                return Integer.parseInt(s);
+                            } catch (NumberFormatException ex) {
+                                return null;
+                            }
+                        })
+                        .orElse(2);
+    }
+
+    private final static Executor EXECUTOR = Executors.newFixedThreadPool( getThreadNumber(), runnable -> {
         Thread thread = new Thread(runnable);
         thread.setDaemon(true);
         return thread;
