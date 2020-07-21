@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -68,12 +69,23 @@ public class CachedOsmTileRetriever extends OsmTileRetriever {
     }
 
     @Override
-    public Image loadTile(int zoom, long i, long j) throws IOException {
-        return CacheThread.cacheImage(zoom, i, j);
+    public CompletableFuture<Image> loadTile(int zoom, long i, long j) {
+        Image image = fromFileCache(zoom, i, j);
+        if (image != null) {
+            return CompletableFuture.completedFuture(image);
+        }
+        return CompletableFuture.supplyAsync(() -> {
+            logger.fine("start downloading tile " + zoom + "/" + i + "/" + j);
+            try {
+                return CacheThread.cacheImage(zoom, i, j);
+            } catch (IOException e) {
+                throw new RuntimeException("Error " + e.getMessage());
+            }
+        });
     }
 
-    @Override
-    public Image loadFromCache(int zoom, long i, long j) {
+
+    static private Image fromFileCache(int zoom, long i, long j) {
         if (!hasFileCache) {
             return null;
         }
@@ -96,28 +108,19 @@ public class CachedOsmTileRetriever extends OsmTileRetriever {
             openConnection.addRequestProperty("User-Agent", httpAgent);
             openConnection.setConnectTimeout(TIMEOUT);
             openConnection.setReadTimeout(TIMEOUT);
-            InputStream inputStream = null;
-            FileOutputStream fos = null;
-            try {
-                inputStream = openConnection.getInputStream();
+            try (InputStream inputStream = openConnection.getInputStream()) {
                 String enc = File.separator + zoom + File.separator + i + File.separator + j + ".png";
                 logger.fine("retrieve " + urlString + " and store " + enc);
                 File candidate = new File(cacheRoot, enc);
                 candidate.getParentFile().mkdirs();
-                fos = new FileOutputStream(candidate);
-                byte[] buff = new byte[4096];
-                int len = inputStream.read(buff);
-                while (len > 0) {
-                    fos.write(buff, 0, len);
-                    len = inputStream.read(buff);
-                }
-                return candidate;
-            } finally {
-                if (fos != null) {
-                    fos.close();
-                }
-                if (inputStream != null) {
-                    inputStream.close();
+                try (FileOutputStream fos = new FileOutputStream(candidate)) {
+                    byte[] buff = new byte[4096];
+                    int len = inputStream.read(buff);
+                    while (len > 0) {
+                        fos.write(buff, 0, len);
+                        len = inputStream.read(buff);
+                    }
+                    return candidate;
                 }
             }
         }

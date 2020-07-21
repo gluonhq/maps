@@ -38,7 +38,6 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
 
@@ -53,18 +52,18 @@ public class TileImageView extends ImageView {
         setFitWidth(256);
         setPreserveRatio(true);
         setProgress(0);
-        Image image = TILE_RETRIEVER.loadFromCache(zoom, i, j);
-        if (image == null) {
+        CompletableFuture<Image> future = TILE_RETRIEVER.loadTile(zoom, i, j);
+        if (!future.isDone()) {
             setImage(placeHolder);
-            CompletableFuture.supplyAsync(() -> {
-                logger.fine("start downloading tile " + zoom + "/" + i + "/" + j);
-                downloading.setValue(true);
-                try {
-                    return TILE_RETRIEVER.loadTile(zoom, i, j);
-                } catch (IOException e) {
-                    setException(e);
+            logger.fine("start downloading tile " + zoom + "/" + i + "/" + j);
+            downloading.setValue(true);
+            future.handle((image, t) -> {
+                if (t != null) {
+                    logger.fine("Tile " + zoom + "/" + i + "/" + j + " failed with exception");
+                    setException(new Exception(t));
+                    return null;
                 }
-                return null;
+                return image;
             }).thenAccept(file -> {
                 logger.fine("Tile from downloaded file " + zoom + "/" + i + "/" + j);
                 downloading.setValue(false);
@@ -72,8 +71,8 @@ public class TileImageView extends ImageView {
                 setProgress(1);
             });
         } else {
-            logger.fine("Tile from file cache = " + image.getUrl());
-            setImage(image);
+            logger.fine("Tile from file cache");
+            setImage(future.getNow(null));
             setProgress(1);
         }
     }

@@ -30,7 +30,7 @@ package com.gluonhq.impl.maps.tile.osm;
 import com.gluonhq.maps.tile.TileRetriever;
 import javafx.scene.image.Image;
 
-import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
 
 public class OsmTileRetriever implements TileRetriever {
 
@@ -51,13 +51,9 @@ public class OsmTileRetriever implements TileRetriever {
     }
 
     @Override
-    public Image loadTile(int zoom, long i, long j) throws IOException {
+    public CompletableFuture<Image> loadTile(int zoom, long i, long j) {
         String urlString = buildImageUrlString(zoom, i, j);
-        return new Image(urlString, true);
+        return CompletableFuture.completedFuture(new Image(urlString, true));
     }
 
-    @Override
-    public Image loadFromCache(int zoom, long i, long j) {
-        return null;
-    }
 }
