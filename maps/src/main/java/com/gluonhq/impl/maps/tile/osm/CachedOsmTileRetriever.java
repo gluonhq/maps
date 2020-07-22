@@ -38,6 +38,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -45,6 +47,7 @@ public class CachedOsmTileRetriever extends OsmTileRetriever {
 
     private static final Logger logger = Logger.getLogger(CachedOsmTileRetriever.class.getName());
     private static final int TIMEOUT = 10000;
+    private final static Executor EXECUTOR = Executors.newFixedThreadPool(2);
 
     static File cacheRoot;
     static boolean hasFileCache;
@@ -81,7 +84,7 @@ public class CachedOsmTileRetriever extends OsmTileRetriever {
             } catch (IOException e) {
                 throw new RuntimeException("Error " + e.getMessage());
             }
-        });
+        }, EXECUTOR);
     }
 
 
