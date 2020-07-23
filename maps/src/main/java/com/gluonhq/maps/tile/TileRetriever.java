@@ -29,7 +29,6 @@ package com.gluonhq.maps.tile;
 
 import javafx.scene.image.Image;
 
-import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
 
 public interface TileRetriever {
