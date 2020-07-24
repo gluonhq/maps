@@ -38,13 +38,14 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Supplier;
 import java.util.logging.Logger;
 
 public class TileImageView extends ImageView {
 
     private static final Logger logger = Logger.getLogger(TileImageView.class.getName());
-    private static final Image placeHolder = new Image(TileImageView.class.getResourceAsStream("/loading.gif"));
     private static final TileRetriever TILE_RETRIEVER = TileRetrieverProvider.getInstance().load();
 
     public TileImageView(int zoom, long i, long j) {
@@ -54,7 +55,7 @@ public class TileImageView extends ImageView {
         setProgress(0);
         CompletableFuture<Image> future = TILE_RETRIEVER.loadTile(zoom, i, j);
         if (!future.isDone()) {
-            setImage(placeHolder);
+            Optional.ofNullable(placeholderImageSupplier).ifPresent(s -> setImage(s.get()));
             logger.fine("start downloading tile " + zoom + "/" + i + "/" + j);
             downloading.setValue(true);
             future.handle((image, t) -> {
@@ -75,6 +76,12 @@ public class TileImageView extends ImageView {
             setImage(future.getNow(null));
             setProgress(1);
         }
+    }
+
+    private static Supplier<Image> placeholderImageSupplier;
+
+    public static void setPlaceholderImageSupplier(Supplier<Image> supplier) {
+        placeholderImageSupplier = supplier;
     }
 
     private final ReadOnlyBooleanWrapper downloading = new ReadOnlyBooleanWrapper(TileImageView.this, "downloading", false);
