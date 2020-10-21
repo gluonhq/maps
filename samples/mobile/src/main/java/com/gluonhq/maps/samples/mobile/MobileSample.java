@@ -52,6 +52,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
+import com.gluonhq.impl.maps.tile.osm.CachedOsmTileRetriever;
+import com.gluonhq.maps.tile.TileRetriever;
 public class MobileSample extends Application {
 
     private static final Logger LOGGER = Logger.getLogger(MobileSample.class.getName());
@@ -68,7 +70,34 @@ public class MobileSample extends Application {
 
     @Override
     public void start(Stage stage) {
-        MapView view = new MapView();
+    	TileRetriever osm=new CachedOsmTileRetriever() {
+    		 public String buildImageUrlString(int zoom, long i, long j) {
+    			 return "http://tile.openstreetmap.org/" +zoom+"/"+ i + "/" + j + ".png";
+    			    
+    		 }
+    		 public String copyright() {
+    			 return "Map © OpenStreetMap contributors CC-BY-SA -- Please switch to another tile provider ";
+    		 }
+    	};
+    	
+    	TileRetriever mapBox=new CachedOsmTileRetriever() {
+   		 public String buildImageUrlString(int zoom, long i, long j) {
+   			String url= "https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/256/"+zoom+"/"+i+"/"+j+"?access_token=XXXXXX";   			
+   			return url;
+   		 }
+   		 public String copyright() {
+   			 return "Map data © OpenStreetMap contributors CC-BY-SA, Imagery © Mapbox";
+   		 }
+   	    };
+
+   	
+        MapView view = new MapView(osm);
+        
+        
+        
+        
+        
+        
         view.addLayer(positionLayer());
         view.setZoom(3);
         Scene scene;

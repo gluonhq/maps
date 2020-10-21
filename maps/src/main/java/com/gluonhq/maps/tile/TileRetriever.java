@@ -41,4 +41,5 @@ public interface TileRetriever {
      * @return an image representing the tile
      */
     Image loadTile(int zoom, long i, long j);
+    String copyright();
 }

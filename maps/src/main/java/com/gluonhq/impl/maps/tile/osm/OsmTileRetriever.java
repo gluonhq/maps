@@ -30,9 +30,10 @@ package com.gluonhq.impl.maps.tile.osm;
 import com.gluonhq.maps.tile.TileRetriever;
 import javafx.scene.image.Image;
 
-public class OsmTileRetriever implements TileRetriever {
+public abstract class OsmTileRetriever implements TileRetriever {
 
-    private static final String host = "http://tile.openstreetmap.org/";
+	
+    
     static final String httpAgent;
 
     static {
@@ -44,10 +45,10 @@ public class OsmTileRetriever implements TileRetriever {
         System.setProperty("http.agent", httpAgent);
     }
 
-    static String buildImageUrlString(int zoom, long i, long j) {
-        return host + zoom + "/" + i + "/" + j + ".png";
-    }
-
+    public abstract String buildImageUrlString(int zoom, long i, long j);
+    
+    
+    
     @Override
     public Image loadTile(int zoom, long i, long j) {
         String urlString = buildImageUrlString(zoom, i, j);

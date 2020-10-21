@@ -29,6 +29,7 @@ package com.gluonhq.impl.maps;
 
 import com.gluonhq.maps.MapPoint;
 import com.gluonhq.maps.MapView;
+import com.gluonhq.maps.tile.TileRetriever;
 import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -95,7 +96,10 @@ public class BaseMap extends Group {
     private final ChangeListener<Number> resizeListener = (o, oldValue, newValue) -> markDirty();
     private ChangeListener<Scene> sceneListener;   
 
-    public BaseMap() {
+    public TileRetriever tileRetriever;
+    
+    public BaseMap(TileRetriever tileRetriever) {
+    	this.tileRetriever=tileRetriever;
         for (int i = 0; i < tiles.length; i++) {
             tiles[i] = new HashMap<>();
         }

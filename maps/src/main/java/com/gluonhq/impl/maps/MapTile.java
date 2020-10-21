@@ -27,7 +27,7 @@
  */
 package com.gluonhq.impl.maps;
 
-import com.gluonhq.maps.tile.TileRetrieverProvider;
+
 import com.gluonhq.maps.tile.TileRetriever;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
@@ -50,7 +50,7 @@ import static java.lang.Math.floor;
 class MapTile extends Region {
 
     private static final Logger logger = Logger.getLogger( MapTile.class.getName() );
-    private static final TileRetriever TILE_RETRIEVER = TileRetrieverProvider.getInstance().load();
+//    private static final TileRetriever TILE_RETRIEVER = TileRetrieverProvider.getInstance().load();
 
     final int myZoom;
     final long i, j;
@@ -83,7 +83,7 @@ class MapTile extends Region {
 
         ImageView imageView = new ImageView();
         imageView.setMouseTransparent(true);
-        Image tile = TILE_RETRIEVER.loadTile(myZoom, i, j);
+        Image tile = baseMap.tileRetriever.loadTile(myZoom, i, j);
         imageView.setImage(tile);
         this.progress = tile.progressProperty();
 

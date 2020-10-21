@@ -46,16 +46,16 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class CachedOsmTileRetriever extends OsmTileRetriever {
+public abstract class CachedOsmTileRetriever extends OsmTileRetriever {
 
     private static final Logger logger = Logger.getLogger(CachedOsmTileRetriever.class.getName());
-    private static final int TIMEOUT = 5000;
+    private static  final int TIMEOUT = 5000;
 
-    static File cacheRoot;
-    static boolean hasFileCache;
-    static CacheThread cacheThread = null;
+     File cacheRoot;
+     boolean hasFileCache;
+     CacheThread cacheThread = null;
 
-    static {
+     {
         try {
             File storageRoot = StorageService.create()
                     .flatMap(StorageService::getPrivateStorage)
@@ -79,7 +79,7 @@ public class CachedOsmTileRetriever extends OsmTileRetriever {
         }
     }
 
-    private final static Executor EXECUTOR = Executors.newFixedThreadPool(2, runnable -> {
+    private final Executor EXECUTOR = Executors.newFixedThreadPool(2, runnable -> {
         Thread thread = new Thread(runnable);
         thread.setDaemon(true);
         return thread;
@@ -112,7 +112,7 @@ public class CachedOsmTileRetriever extends OsmTileRetriever {
      * @param j
      * @return
      */
-    static private Image fromFileCache(int zoom, long i, long j) {
+    private Image fromFileCache(int zoom, long i, long j) {
         if (!hasFileCache) {
             return null;
         }
@@ -125,7 +125,7 @@ public class CachedOsmTileRetriever extends OsmTileRetriever {
         return null;
     }
 
-    private static class CacheThread extends Thread {
+    private  class CacheThread extends Thread {
 
         private boolean active = true;
         private String basePath;
