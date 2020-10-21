@@ -54,14 +54,15 @@ public abstract class CachedOsmTileRetriever extends OsmTileRetriever {
     File cacheRoot;
     boolean hasFileCache;
     CacheThread cacheThread = null;
-     
-    public CachedOsmTileRetriever() {
+    String cacheName;
+    public CachedOsmTileRetriever(String cacheName) {
+        this.cacheName=cacheName;
         try {
             File storageRoot = StorageService.create()
                     .flatMap(StorageService::getPrivateStorage)
                     .orElseThrow(() -> new IOException("Storage Service is not available"));
 
-            cacheRoot = new File(storageRoot, ".gluonmaps");
+            cacheRoot = new File(storageRoot, ".gluonmaps-"+cacheName);
             logger.fine("[JVDBG] cacheroot = " + cacheRoot);
             if (!cacheRoot.isDirectory()) {
                 hasFileCache = cacheRoot.mkdirs();
