@@ -70,33 +70,27 @@ public class MobileSample extends Application {
 
     @Override
     public void start(Stage stage) {
-    	TileRetriever osm=new CachedOsmTileRetriever() {
-    		 public String buildImageUrlString(int zoom, long i, long j) {
-    			 return "http://tile.openstreetmap.org/" +zoom+"/"+ i + "/" + j + ".png";
-    			    
-    		 }
-    		 public String copyright() {
-    			 return "Map © OpenStreetMap contributors CC-BY-SA -- Please switch to another tile provider ";
-    		 }
-    	};
-    	
-    	TileRetriever mapBox=new CachedOsmTileRetriever() {
-   		 public String buildImageUrlString(int zoom, long i, long j) {
-   			String url= "https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/256/"+zoom+"/"+i+"/"+j+"?access_token=XXXXXX";   			
-   			return url;
-   		 }
-   		 public String copyright() {
-   			 return "Map data © OpenStreetMap contributors CC-BY-SA, Imagery © Mapbox";
-   		 }
-   	    };
-
-   	
+        TileRetriever osm=new CachedOsmTileRetriever() {
+             public String buildImageUrlString(int zoom, long i, long j) {
+                 return "http://tile.openstreetmap.org/" +zoom+"/"+ i + "/" + j + ".png";
+                    
+             }
+             public String copyright() {
+                 return "Map data © OpenStreetMap contributors, CC-BY-SA. Imagery © OpenStreetMap, for demo only.";
+             }
+        };
+        
+        TileRetriever mapBox=new CachedOsmTileRetriever() {
+            public String buildImageUrlString(int zoom, long i, long j) {
+               String url= "https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/256/"+zoom+"/"+i+"/"+j+"?access_token=XXXXXX";               
+               return url;
+            }
+            public String copyright() {
+                return "Map data © OpenStreetMap contributors CC-BY-SA, Imagery © Mapbox";
+            }
+           };
+       
         MapView view = new MapView(osm);
-        
-        
-        
-        
-        
         
         view.addLayer(positionLayer());
         view.setZoom(3);

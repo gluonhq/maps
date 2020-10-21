@@ -51,11 +51,11 @@ public abstract class CachedOsmTileRetriever extends OsmTileRetriever {
     private static final Logger logger = Logger.getLogger(CachedOsmTileRetriever.class.getName());
     private static  final int TIMEOUT = 5000;
 
-     File cacheRoot;
-     boolean hasFileCache;
-     CacheThread cacheThread = null;
-
-     {
+    File cacheRoot;
+    boolean hasFileCache;
+    CacheThread cacheThread = null;
+     
+    public CachedOsmTileRetriever() {
         try {
             File storageRoot = StorageService.create()
                     .flatMap(StorageService::getPrivateStorage)

@@ -39,6 +39,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
 import javafx.util.Duration;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.paint.Color;
@@ -74,6 +75,7 @@ public class MapView extends Region {
         getChildren().add(baseMap);
         label=new Label(tileRetriever.copyright());
         label.setBackground(new Background(new BackgroundFill(Color.rgb(126, 126, 126, 0.5),null,null)));
+        label.setFont(Font.font(11));
         getChildren().add(label);
         
         registerInputListeners();
