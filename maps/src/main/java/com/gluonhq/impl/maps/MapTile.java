@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2018, Gluon
+ * Copyright (c) 2016, 2020, Gluon
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,14 +27,10 @@
  */
 package com.gluonhq.impl.maps;
 
-import com.gluonhq.maps.tile.TileRetrieverProvider;
-import com.gluonhq.maps.tile.TileRetriever;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.WeakInvalidationListener;
 import javafx.beans.property.ReadOnlyDoubleProperty;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.Region;
 import javafx.scene.transform.Scale;
 
@@ -50,7 +46,6 @@ import static java.lang.Math.floor;
 class MapTile extends Region {
 
     private static final Logger logger = Logger.getLogger( MapTile.class.getName() );
-    private static final TileRetriever TILE_RETRIEVER = TileRetrieverProvider.getInstance().load();
 
     final int myZoom;
     final long i, j;
@@ -81,24 +76,27 @@ class MapTile extends Region {
         getTransforms().add(scale);
         debug("[JVDBG] load image [" + myZoom + "], i = " + i + ", j = " + j);
 
-        ImageView imageView = new ImageView();
+        final TileImageView imageView = new TileImageView(myZoom, i, j);
+        imageView.exceptionProperty().addListener((obs, ov, nv) -> logger.info("Error: " + nv.getMessage()));
         imageView.setMouseTransparent(true);
-        Image tile = TILE_RETRIEVER.loadTile(myZoom, i, j);
-        imageView.setImage(tile);
-        this.progress = tile.progressProperty();
+        progress = imageView.progressProperty();
 
-//        Label l = new Label("Tile [" + myZoom + "], i = " + i + ", j = " + j);
-        getChildren().addAll(imageView);//,l);
-        this.progress.addListener(new InvalidationListener() {
-            @Override
-            public void invalidated(Observable observable) {
-                if (progress.get() >= 1.0d) {
-                    debug("[JVDBG] got image [" + myZoom + "], i = " + i + ", j = " + j);
-                    setNeedsLayout(true);
-                    progress.removeListener(this);
+        getChildren().addAll(imageView);
+        if (progress.get() == 1.0) {
+            debug("Already got image [" + myZoom + "], i = " + i + ", j = " + j);
+            setNeedsLayout(true);
+        } else {
+            progress.addListener(new InvalidationListener() {
+                @Override
+                public void invalidated(Observable observable) {
+                    if (progress.get() >= 1.0d) {
+                        debug("Got image [" + myZoom + "], i = " + i + ", j = " + j);
+                        setNeedsLayout(true);
+                        progress.removeListener(this);
+                    }
                 }
-            }
-        });
+            });
+        }
         baseMap.zoom().addListener(new WeakInvalidationListener(zl));
         baseMap.translateXProperty().addListener(new WeakInvalidationListener(zl));
         baseMap.translateYProperty().addListener(new WeakInvalidationListener(zl));
@@ -107,7 +105,7 @@ class MapTile extends Region {
     }
 
     boolean loading() {
-        return !(progress.greaterThanOrEqualTo(1.)).get();
+        return progress.get() < 1.0;
     }
 
     /**

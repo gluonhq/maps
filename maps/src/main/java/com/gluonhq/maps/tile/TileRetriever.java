@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Gluon
+ * Copyright (c) 2018, 2020, Gluon
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,8 @@ package com.gluonhq.maps.tile;
 
 import javafx.scene.image.Image;
 
+import java.util.concurrent.CompletableFuture;
+
 public interface TileRetriever {
 
     /**
@@ -38,7 +40,8 @@ public interface TileRetriever {
      * @param zoom the desired zoom level for the tile to load
      * @param i the horizontal position of the tile to load
      * @param j the vertical position of the tile to load
-     * @return an image representing the tile
+     * @return a completableFuture with the image representing the tile
      */
-    Image loadTile(int zoom, long i, long j);
+    CompletableFuture<Image> loadTile(int zoom, long i, long j);
+
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Gluon
+ * Copyright (c) 2018, 2020, Gluon
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +30,8 @@ package com.gluonhq.impl.maps.tile.osm;
 import com.gluonhq.maps.tile.TileRetriever;
 import javafx.scene.image.Image;
 
+import java.util.concurrent.CompletableFuture;
+
 public class OsmTileRetriever implements TileRetriever {
 
     private static final String host = "http://tile.openstreetmap.org/";
@@ -49,8 +51,9 @@ public class OsmTileRetriever implements TileRetriever {
     }
 
     @Override
-    public Image loadTile(int zoom, long i, long j) {
+    public CompletableFuture<Image> loadTile(int zoom, long i, long j) {
         String urlString = buildImageUrlString(zoom, i, j);
-        return new Image(urlString, true);
+        return CompletableFuture.completedFuture(new Image(urlString, true));
     }
+
 }
