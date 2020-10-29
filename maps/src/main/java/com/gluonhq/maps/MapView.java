@@ -30,6 +30,7 @@ package com.gluonhq.maps;
 import com.gluonhq.attach.util.Platform;
 import com.gluonhq.impl.maps.BaseMap;
 import com.gluonhq.maps.tile.TileRetriever;
+import com.gluonhq.impl.maps.TileImageView;
 import javafx.animation.Animation.Status;
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
@@ -37,6 +38,7 @@ import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.geometry.Point2D;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.layout.Region;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
@@ -48,6 +50,7 @@ import javafx.scene.layout.Background;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Supplier;
 
 /**
  *
@@ -230,6 +233,16 @@ public class MapView extends Region {
             new KeyFrame(Duration.seconds(waitTime + seconds), new KeyValue(baseMap.prefCenterLat(), mapPoint.getLatitude()), new KeyValue(baseMap.prefCenterLon(), mapPoint.getLongitude(), Interpolator.EASE_BOTH))
         );
         timeline.play();
+    }
+
+    /**
+     * Set a supplier of an Image that can be used as placeholder by the Tile
+     * while the final image is being retrieved
+     *
+     * @param supplier a supplier that provides a placeholder Image
+     */
+    public static void setPlaceholderImageSupplier(Supplier<Image> supplier) {
+        TileImageView.setPlaceholderImageSupplier(supplier);
     }
 
     private boolean dirty = false;

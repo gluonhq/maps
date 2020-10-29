@@ -82,7 +82,7 @@ public class MobileSample extends Application {
         
         TileRetriever mapBox=new CachedOsmTileRetriever("mapBox") {
             public String buildImageUrlString(int zoom, long i, long j) {
-               String url= "https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/256/"+zoom+"/"+i+"/"+j+"?access_token=XXXXXX";               
+               String url= "https://api.mapbox.com/styles/v1/mapbox/satellite-v9/tiles/256/"+zoom+"/"+i+"/"+j+"?access_token=pk.eyJ1IjoiYnJ1bmVzdG8iLCJhIjoiY2lvNGowMmx4MDAycXZ5a3A0aXdqZTZjbCJ9.0kHXvJmsETs_QzfXfQv9mw";               
                return url;
             }
             public String copyright() {
@@ -90,7 +90,7 @@ public class MobileSample extends Application {
             }
            };
        
-        MapView view = new MapView(osm);
+        MapView view = new MapView(mapBox);
         
         view.addLayer(positionLayer());
         view.setZoom(3);
