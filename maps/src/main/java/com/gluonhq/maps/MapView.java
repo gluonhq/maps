@@ -46,8 +46,6 @@ import javafx.util.Duration;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.paint.Color;
 import javafx.scene.layout.Background;
-
-
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Supplier;
@@ -74,9 +72,9 @@ public class MapView extends Region {
      * Create a MapView component.
      */
     public MapView(TileRetriever tileRetriever) {
-        baseMap = new BaseMap( tileRetriever);
+        baseMap = new BaseMap(tileRetriever);
         getChildren().add(baseMap);
-        label=new Label(tileRetriever.copyright());
+        label = new Label(tileRetriever.copyright());
         label.setBackground(new Background(new BackgroundFill(Color.rgb(126, 126, 126, 0.5),null,null)));
         label.setFont(Font.font(11));
         getChildren().add(label);
@@ -267,8 +265,8 @@ public class MapView extends Region {
         }
         super.layoutChildren();
         
-        label.setLayoutX(w-label.getWidth());
-        label.setLayoutY(h-label.getHeight());
+        label.setLayoutX(w - label.getWidth());
+        label.setLayoutY(h - label.getHeight());
         
         dirty = false;
 

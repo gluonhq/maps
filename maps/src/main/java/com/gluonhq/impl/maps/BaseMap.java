@@ -99,7 +99,7 @@ public class BaseMap extends Group {
     public TileRetriever tileRetriever;
     
     public BaseMap(TileRetriever tileRetriever) {
-    	this.tileRetriever=tileRetriever;
+    	this.tileRetriever = tileRetriever;
         for (int i = 0; i < tiles.length; i++) {
             tiles[i] = new HashMap<>();
         }

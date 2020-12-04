@@ -70,7 +70,7 @@ public class MobileSample extends Application {
 
     @Override
     public void start(Stage stage) {
-        TileRetriever osm=new CachedOsmTileRetriever() {
+        TileRetriever osm = new CachedOsmTileRetriever() {
              public String buildImageUrlString(int zoom, long i, long j) {
                  return "http://tile.openstreetmap.org/" +zoom+"/"+ i + "/" + j + ".png";
                     
@@ -80,9 +80,9 @@ public class MobileSample extends Application {
              }
         };
         
-        TileRetriever mapBox=new CachedOsmTileRetriever() {
+        TileRetriever mapBox = new CachedOsmTileRetriever() {
             public String buildImageUrlString(int zoom, long i, long j) {
-               String url= "https://api.mapbox.com/styles/v1/mapbox/satellite-v9/tiles/256/"+zoom+"/"+i+"/"+j+"?access_token=xxxx";               
+               String url = "https://api.mapbox.com/styles/v1/mapbox/satellite-v9/tiles/256/"+zoom+"/"+i+"/"+j+"?access_token=xxxx";               
                return url;
             }
             public String copyright() {

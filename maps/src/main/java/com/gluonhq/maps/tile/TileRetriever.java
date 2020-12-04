@@ -32,7 +32,10 @@ import javafx.scene.image.Image;
 import java.util.concurrent.CompletableFuture;
 
 public interface TileRetriever {
-
+    
+    /**
+     * @return copyright info to be overlayed on the map
+     */
     String copyright();
     
     /**
@@ -43,6 +46,6 @@ public interface TileRetriever {
      * @param i the horizontal position of the tile to load
      * @param j the vertical position of the tile to load
      * @return a completableFuture with the image representing the tile
-     */    
+     */
     CompletableFuture<Image> loadTile(int zoom, long i, long j);
 }
