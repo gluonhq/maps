@@ -75,9 +75,9 @@ public class MapView extends Region {
         baseMap = new BaseMap(tileRetriever);
         getChildren().add(baseMap);
         label = new Label(tileRetriever.copyright());
-        label.setBackground(new Background(new BackgroundFill(Color.rgb(126, 126, 126, 0.5),null,null)));
-        label.setFont(Font.font(11));
+        label.getStyleClass().add("label-license");
         getChildren().add(label);
+        getStylesheets().add(MapView.class.getResource("maps.css").toExternalForm());
         
         registerInputListeners();
 
