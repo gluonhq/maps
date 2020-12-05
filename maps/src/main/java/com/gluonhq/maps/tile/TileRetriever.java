@@ -34,7 +34,7 @@ import java.util.concurrent.CompletableFuture;
 public interface TileRetriever {
     
     /**
-     * @return copyright info to be overlayed on the map
+     * @return Copyright/Attribution info to be overlayed on the map
      */
     String copyright();
     
