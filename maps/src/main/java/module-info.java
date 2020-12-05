@@ -37,4 +37,5 @@ module com.gluonhq.maps {
 
     exports com.gluonhq.maps;
     exports com.gluonhq.maps.tile;
+    exports com.gluonhq.impl.maps.tile.osm;
 }
