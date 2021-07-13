@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2019, Gluon
+ * Copyright (c) 2016, 2021, Gluon
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,13 +28,13 @@
 
 plugins {
     id 'java'
-    id 'org.openjfx.javafxplugin' version '0.0.8' apply false
+    id 'org.openjfx.javafxplugin' version '0.0.10' apply false
 }
 
 apply plugin: 'base'
 
-ext.attachVersion = "4.0.5"
-ext.javafxVersion = "13.0.2"
+ext.attachVersion = "4.0.11"
+ext.javafxVersion = "16"
 
 subprojects {
     apply plugin: 'java'
@@ -47,7 +47,7 @@ subprojects {
     repositories {
         mavenCentral()
         maven {
-            url "http://nexus.gluonhq.com/nexus/content/repositories/releases/"
+            url "https://nexus.gluonhq.com/nexus/content/repositories/releases/"
         }
         maven {
             url "https://oss.sonatype.org/content/repositories/snapshots/"
