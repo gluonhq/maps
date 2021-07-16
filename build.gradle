@@ -37,7 +37,7 @@ ext.attachVersion = "4.0.11"
 ext.javafxVersion = "16"
 
 subprojects {
-    apply plugin: 'java'
+    apply plugin: 'java-library'
     apply plugin: 'org.openjfx.javafxplugin'
     group = 'com.gluonhq'
 

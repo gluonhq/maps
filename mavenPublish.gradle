@@ -26,7 +26,6 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-apply plugin: 'java-library'
 apply plugin: 'maven-publish'
 apply plugin: 'signing'
 
