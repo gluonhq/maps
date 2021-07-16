@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2020, Gluon
+ * Copyright (c) 2016, 2021, Gluon
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +37,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.file.Files;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -54,11 +56,15 @@ public class CachedOsmTileRetriever extends OsmTileRetriever {
     static boolean hasFileCache;
     static {
         try {
-            File storageRoot = StorageService.create()
-                    .flatMap(StorageService::getPrivateStorage)
-                    .orElseThrow(() -> new IOException("Storage Service is not available"));
-
-            cacheRoot = new File(storageRoot, ".gluonmaps");
+            Optional<File> storageRoot = StorageService.create()
+                    .flatMap(StorageService::getPrivateStorage);
+            if (storageRoot.isEmpty()) {
+                cacheRoot = Files.createTempDirectory(".gluonmaps").toFile();
+                logger.info("StorageService implementation not found.\n" +
+                        "Tiles will be cached at a temporary directory: " + cacheRoot);
+            } else {
+                cacheRoot = new File(storageRoot.get(), ".gluonmaps");
+            }
             logger.fine("[JVDBG] cacheroot = " + cacheRoot);
             if (!cacheRoot.isDirectory()) {
                 hasFileCache = cacheRoot.mkdirs();
