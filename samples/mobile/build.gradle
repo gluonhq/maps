@@ -33,7 +33,7 @@ plugins {
 repositories {
     mavenCentral()
     maven {
-        url 'http://nexus.gluonhq.com/nexus/content/repositories/public-snapshots/'
+        url 'https://nexus.gluonhq.com/nexus/content/repositories/public-snapshots/'
     }
 }
 
