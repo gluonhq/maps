@@ -30,24 +30,12 @@ plugins {
     id 'application'
 }
 
-repositories {
-    mavenCentral()
-    maven {
-        url 'https://nexus.gluonhq.com/nexus/content/repositories/public-snapshots/'
-    }
-}
-
 dependencies {
     implementation project(':maps')
     implementation "com.gluonhq.attach:storage:$attachVersion:desktop"
     implementation "com.gluonhq.attach:position:$attachVersion"
     implementation "com.gluonhq.attach:lifecycle:$attachVersion"
     implementation "com.gluonhq.attach:util:$attachVersion"
-}
-
-javafx {
-    version = "$javafxVersion"
-    modules "javafx.controls"
 }
 
 mainClassName = "$moduleName/com.gluonhq.maps.samples.mobile.MobileSample"

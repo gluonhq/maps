@@ -36,19 +36,7 @@ apply from: rootProject.file('mavenPublish.gradle')
 apply from: rootProject.file('gradle/publishing.gradle')
 apply from: rootProject.file('gradle/code-quality.gradle')
 
-repositories {
-    mavenCentral()
-    maven {
-        url 'https://nexus.gluonhq.com/nexus/content/repositories/releases/'
-    }
-}
-
 dependencies {
     api "com.gluonhq.attach:storage:$attachVersion"
     api "com.gluonhq.attach:util:$attachVersion"
-}
-
-javafx {
-    version = "$javafxVersion"
-    modules "javafx.controls"
 }

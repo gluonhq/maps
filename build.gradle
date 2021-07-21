@@ -27,19 +27,18 @@
  */
 
 plugins {
-    id 'java'
+    id 'base'
     id 'org.openjfx.javafxplugin' version '0.0.10' apply false
 }
-
-apply plugin: 'base'
 
 ext.attachVersion = "4.0.11"
 ext.javafxVersion = "16"
 
+group = 'com.gluonhq'
+
 subprojects {
     apply plugin: 'java-library'
     apply plugin: 'org.openjfx.javafxplugin'
-    group = 'com.gluonhq'
 
     sourceCompatibility = '11'
     [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
@@ -52,5 +51,10 @@ subprojects {
         maven {
             url "https://oss.sonatype.org/content/repositories/snapshots/"
         }
+    }
+
+    javafx {
+        version = "$javafxVersion"
+        modules "javafx.controls"
     }
 }
