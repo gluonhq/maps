@@ -31,20 +31,8 @@ plugins {
     id 'com.gluonhq.gluonfx-gradle-plugin' version '1.0.3'
 }
 
-repositories {
-    mavenCentral()
-    maven {
-        url 'http://nexus.gluonhq.com/nexus/content/repositories/public-snapshots/'
-    }
-}
-
 dependencies {
     implementation project(':maps')
-}
-
-javafx {
-    version = "$javafxVersion"
-    modules "javafx.controls"
 }
 
 gluonfx {
