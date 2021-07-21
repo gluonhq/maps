@@ -32,7 +32,12 @@ import javafx.scene.image.Image;
 import java.util.concurrent.CompletableFuture;
 
 public interface TileRetriever {
-
+    
+    /**
+     * @return Copyright/Attribution info to be overlayed on the map
+     */
+    String copyright();
+    
     /**
      * Loads a tile at the specified zoom level and coordinates and returns it
      * as an {@link Image}.
@@ -43,5 +48,4 @@ public interface TileRetriever {
      * @return a completableFuture with the image representing the tile
      */
     CompletableFuture<Image> loadTile(int zoom, long i, long j);
-
 }

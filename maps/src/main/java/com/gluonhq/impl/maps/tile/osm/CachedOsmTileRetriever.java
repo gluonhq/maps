@@ -46,15 +46,17 @@ import java.util.concurrent.ThreadFactory;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class CachedOsmTileRetriever extends OsmTileRetriever {
+public abstract class CachedOsmTileRetriever extends OsmTileRetriever {
 
     private static final Logger logger = Logger.getLogger(CachedOsmTileRetriever.class.getName());
     private static final int TIMEOUT = 10000;
     private static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(2, new DaemonThreadFactory());
 
-    static File cacheRoot;
-    static boolean hasFileCache;
-    static {
+    File cacheRoot;
+    boolean hasFileCache;
+    CacheThread cacheThread = null;
+     
+    public CachedOsmTileRetriever() {
         try {
             Optional<File> storageRoot = StorageService.create()
                     .flatMap(StorageService::getPrivateStorage);
@@ -70,6 +72,9 @@ public class CachedOsmTileRetriever extends OsmTileRetriever {
                 hasFileCache = cacheRoot.mkdirs();
             } else {
                 hasFileCache = true;
+            }
+            if (hasFileCache) {
+                cacheThread = new CacheThread();                
             }
             logger.fine("hasfilecache = " + hasFileCache);
         } catch (IOException ex) {
@@ -87,7 +92,7 @@ public class CachedOsmTileRetriever extends OsmTileRetriever {
         return CompletableFuture.supplyAsync(() -> {
             logger.fine("start downloading tile " + zoom + "/" + i + "/" + j);
             try {
-                return CacheThread.cacheImage(zoom, i, j);
+                return cacheThread.cacheImage(zoom, i, j);
             } catch (IOException e) {
                 throw new RuntimeException("Error " + e.getMessage());
             }
@@ -95,7 +100,7 @@ public class CachedOsmTileRetriever extends OsmTileRetriever {
     }
 
 
-    static private Image fromFileCache(int zoom, long i, long j) {
+    private Image fromFileCache(int zoom, long i, long j) {
         if (!hasFileCache) {
             return null;
         }
@@ -104,14 +109,14 @@ public class CachedOsmTileRetriever extends OsmTileRetriever {
         return f.exists() ? new Image(f.toURI().toString(), true) : null;
     }
 
-    private static class CacheThread {
+    private class CacheThread {
 
-        public static Image cacheImage(int zoom, long i, long j) throws IOException {
+        public Image cacheImage(int zoom, long i, long j) throws IOException {
             File file = doCache(buildImageUrlString(zoom, i, j), zoom, i, j);
             return new Image(new FileInputStream(file));
         }
 
-        private static File doCache(String urlString, int zoom, long i, long j) throws IOException {
+        private File doCache(String urlString, int zoom, long i, long j) throws IOException {
             final URLConnection openConnection;
             URL url = new URL(urlString);
             openConnection = url.openConnection();
@@ -121,7 +126,7 @@ public class CachedOsmTileRetriever extends OsmTileRetriever {
             try (InputStream inputStream = openConnection.getInputStream()) {
                 String enc = File.separator + zoom + File.separator + i + File.separator + j + ".png";
                 logger.fine("retrieve " + urlString + " and store " + enc);
-                File candidate = new File(cacheRoot, enc);
+                File candidate = new File(cacheRoot.getPath(), enc);
                 candidate.getParentFile().mkdirs();
                 try (FileOutputStream fos = new FileOutputStream(candidate)) {
                     byte[] buff = new byte[4096];

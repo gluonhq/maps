@@ -52,6 +52,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
+import com.gluonhq.impl.maps.tile.osm.CachedOsmTileRetriever;
+import com.gluonhq.maps.tile.TileRetriever;
 public class MobileSample extends Application {
 
     private static final Logger LOGGER = Logger.getLogger(MobileSample.class.getName());
@@ -68,7 +70,49 @@ public class MobileSample extends Application {
 
     @Override
     public void start(Stage stage) {
-        MapView view = new MapView();
+        
+        /*
+         * In order to display OSM tiles you have to choose a tile provider. Here are some lists:
+         * 
+         * -http://leaflet-extras.github.io/leaflet-providers/preview/ (fairly complete list with previews)
+         * -https://wiki.openstreetmap.org/wiki/Tile_servers 
+         * -https://switch2osm.org/providers/#tile-hosting (both free tiers and commercial only)
+         */
+        
+        /*
+         * Here is an example for accessing OpenStreetMap server's tiles.
+         * Please only use for "very limited testing purposes" - @see https://operations.osmfoundation.org/policies/tiles/
+         * 
+         */
+        TileRetriever osm = new CachedOsmTileRetriever() {
+             public String buildImageUrlString(int zoom, long i, long j) {
+                 return "http://tile.openstreetmap.org/" +zoom+"/"+ i + "/" + j + ".png";
+             }
+             public String copyright() {
+                 return "Map data © OpenStreetMap contributors, CC-BY-SA. Imagery © OpenStreetMap, for demo only.";
+             }
+        };
+        /*
+         * Another example, using MapBox tiles free tier.
+         * To access MapBox you will need to create an account at https://www.mapbox.com/maps/ and generate an access token.
+         * 
+         * Please note that the access token here is for demo only and will be replaced at some point - you need to get your own
+         * 
+         * Styles known to work: satellite-v9,streets-v8
+         */
+        TileRetriever mapBox = new CachedOsmTileRetriever() {
+            public String buildImageUrlString(int zoom, long i, long j) {
+               String token = "pk.eyJ1IjoiYnJ1bmVzdG8iLCJhIjoiY2tpYjRpcWVrMDk3bDJ5azBibGZmYjJ2NyJ9.5mKw_JV1w9-VoAxjn2f9LA";
+               String url = "https://api.mapbox.com/styles/v1/mapbox/satellite-v9/tiles/256/"+zoom+"/"+i+"/"+j+"?access_token="+token;
+               return url;
+            }
+            public String copyright() {
+                return "Map data © OpenStreetMap contributors CC-BY-SA, Imagery © Mapbox";
+            }
+           };
+       
+        MapView view = new MapView(mapBox);
+        
         view.addLayer(positionLayer());
         view.setZoom(3);
         Scene scene;

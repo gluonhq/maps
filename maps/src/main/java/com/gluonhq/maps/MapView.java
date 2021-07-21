@@ -29,6 +29,7 @@ package com.gluonhq.maps;
 
 import com.gluonhq.attach.util.Platform;
 import com.gluonhq.impl.maps.BaseMap;
+import com.gluonhq.maps.tile.TileRetriever;
 import com.gluonhq.impl.maps.TileImageView;
 import javafx.animation.Animation.Status;
 import javafx.animation.Interpolator;
@@ -36,11 +37,15 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.geometry.Point2D;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Region;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
 import javafx.util.Duration;
-
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.paint.Color;
+import javafx.scene.layout.Background;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Supplier;
@@ -61,12 +66,19 @@ public class MapView extends Region {
     private boolean zooming = false;
     private boolean enableDragging = false;
     
+    private Label label;
+    
     /**
      * Create a MapView component.
      */
-    public MapView() {
-        baseMap = new BaseMap();
+    public MapView(TileRetriever tileRetriever) {
+        baseMap = new BaseMap(tileRetriever);
         getChildren().add(baseMap);
+        label = new Label(tileRetriever.copyright());
+        label.getStyleClass().add("label-license");
+        getChildren().add(label);
+        getStylesheets().add(MapView.class.getResource("maps.css").toExternalForm());
+        
         registerInputListeners();
 
         baseMap.centerLat().addListener(o -> markDirty());
@@ -252,6 +264,10 @@ public class MapView extends Region {
             }
         }
         super.layoutChildren();
+        
+        label.setLayoutX(w - label.getWidth());
+        label.setLayoutY(h - label.getHeight());
+        
         dirty = false;
 
         // we need to get these values or we won't be notified on new changes

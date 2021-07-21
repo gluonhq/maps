@@ -28,7 +28,7 @@
 package com.gluonhq.impl.maps;
 
 import com.gluonhq.maps.tile.TileRetriever;
-import com.gluonhq.maps.tile.TileRetrieverProvider;
+
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.beans.property.ReadOnlyDoubleProperty;
@@ -46,14 +46,14 @@ import java.util.logging.Logger;
 public class TileImageView extends ImageView {
 
     private static final Logger logger = Logger.getLogger(TileImageView.class.getName());
-    private static final TileRetriever TILE_RETRIEVER = TileRetrieverProvider.getInstance().load();
+    
 
-    public TileImageView(int zoom, long i, long j) {
+    public TileImageView(TileRetriever tileRetriever,int zoom, long i, long j) {
         setFitHeight(256);
         setFitWidth(256);
         setPreserveRatio(true);
         setProgress(0);
-        CompletableFuture<Image> future = TILE_RETRIEVER.loadTile(zoom, i, j);
+        CompletableFuture<Image> future = tileRetriever.loadTile(zoom, i, j);
         if (!future.isDone()) {
             Optional.ofNullable(placeholderImageSupplier).ifPresent(s -> setImage(s.get()));
             logger.fine("start downloading tile " + zoom + "/" + i + "/" + j);
