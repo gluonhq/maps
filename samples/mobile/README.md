@@ -4,7 +4,7 @@ This sample demonstrates how to use Gluon Maps inside a JavaFX application.
 
 ## Instructions
 
-We use [GluonFX plugin](https://docs.gluonhq.com/) to build a native image for platforms including desktop, android and iOS.
+We use [GluonFX plugin](https://docs.gluonhq.com/) to build a native image for platforms including desktop, android, iOS and embedded.
 Please follow the GluonFX prerequisites as stated [here](https://docs.gluonhq.com/#_requirements).
 
 ### Desktop
