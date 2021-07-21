@@ -28,6 +28,7 @@
 
 plugins {
     id 'application'
+    id 'com.gluonhq.gluonfx-gradle-plugin' version '1.0.3'
 }
 
 repositories {
@@ -39,15 +40,24 @@ repositories {
 
 dependencies {
     implementation project(':maps')
-    implementation "com.gluonhq.attach:storage:$attachVersion:desktop"
-    implementation "com.gluonhq.attach:position:$attachVersion"
-    implementation "com.gluonhq.attach:lifecycle:$attachVersion"
-    implementation "com.gluonhq.attach:util:$attachVersion"
 }
 
 javafx {
     version = "$javafxVersion"
     modules "javafx.controls"
+}
+
+gluonfx {
+    target = 'host'
+    if (project.hasProperty('target')) {
+        target = project.getProperty('target')
+    }
+    attachConfig {
+        version = "$attachVersion"
+        configuration = "implementation";
+        services "lifecycle", "position", "storage"
+    }
+    resourcesList = [ "logging.properties" ]
 }
 
 mainClassName = "$moduleName/com.gluonhq.maps.samples.mobile.MobileSample"
