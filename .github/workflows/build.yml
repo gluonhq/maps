@@ -32,7 +32,7 @@ jobs:
         run: |
           ver=$(./gradlew properties -q | grep "version:" | awk '{print $2}')
           if [[ $ver == *"SNAPSHOT"* ]]; then
-              ./gradlew uploadPublished -PsonatypeUsername=$SONATYPE_USERNAME -PsonatypePassword=$SONATYPE_PASSWORD
+              ./gradlew publish -PsonatypeUsername=$SONATYPE_USERNAME -PsonatypePassword=$SONATYPE_PASSWORD
           fi
         shell: bash
         env:
