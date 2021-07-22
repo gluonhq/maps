@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Gluon
+ * Copyright (c) 2018, 2021, Gluon
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,6 +39,10 @@ import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
@@ -46,11 +50,6 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
-
-import javafx.scene.control.Label;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 
 public class MobileSample extends Application {
 
@@ -122,5 +121,9 @@ public class MobileSample extends Application {
                     answer.addPoint(mapPoint, new Circle(7, Color.RED));
                     return answer;
                 });
+    }
+
+    public static void main(String[] args) {
+        Application.launch(args);
     }
 }

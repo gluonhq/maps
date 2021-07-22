@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Gluon
+ * Copyright (c) 2018, 2021, Gluon
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,14 +28,23 @@
 
 plugins {
     id 'application'
+    id 'com.gluonhq.gluonfx-gradle-plugin' version '1.0.3'
 }
 
 dependencies {
     implementation project(':maps')
-    implementation "com.gluonhq.attach:storage:$attachVersion:desktop"
-    implementation "com.gluonhq.attach:position:$attachVersion"
-    implementation "com.gluonhq.attach:lifecycle:$attachVersion"
-    implementation "com.gluonhq.attach:util:$attachVersion"
+}
+
+gluonfx {
+    target = 'host'
+    if (project.hasProperty('target')) {
+        target = project.getProperty('target')
+    }
+    attachConfig {
+        version = "$attachVersion"
+        services "lifecycle", "position", "storage"
+    }
+    resourcesList = [ "logging.properties" ]
 }
 
 mainClassName = "$moduleName/com.gluonhq.maps.samples.mobile.MobileSample"
