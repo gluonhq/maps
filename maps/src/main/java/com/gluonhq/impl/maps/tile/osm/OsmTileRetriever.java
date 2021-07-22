@@ -34,7 +34,7 @@ import java.util.concurrent.CompletableFuture;
 
 public class OsmTileRetriever implements TileRetriever {
 
-    private static final String host = "http://tile.openstreetmap.org/";
+    private static final String host = "https://tile.openstreetmap.org/";
     static final String httpAgent;
 
     static {
