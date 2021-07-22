@@ -49,7 +49,11 @@ jobs:
         if: steps.deploy.outputs.exit_code == 0
         run: |
           TAG=${GITHUB_REF/refs\/tags\//}
-          newVersion=${TAG%.*}.$((${TAG##*.} + 1)) # Update version by 1
+          if [[ $TAG == *"ea+"* ]]; then
+            newVersion=${TAG%+*}+$((${TAG##*+} + 1)) # Update ea version by 1
+          else
+            newVersion=${TAG%.*}.$((${TAG##*.} + 1)) # Update version by 1
+          fi
           sed -i -z "0,/version = $TAG/s//version = $newVersion-SNAPSHOT/" gradle.properties
           git commit gradle.properties -m "Prepare development of $newVersion"
           git push https://gluon-bot:$PAT@github.com/$GITHUB_REPOSITORY HEAD:master
