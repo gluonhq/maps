@@ -1,0 +1,15 @@
+.label.copyright {
+    -fx-font-size: 0.8em;
+    -fx-background-color: dimgrey;
+    -fx-opacity: 0.35;
+    -fx-text-fill: white;
+    -fx-padding: 0.2em;
+}
+
+.label.header {
+    -fx-background-color: dimgrey;
+    -fx-opacity: 0.35;
+    -fx-text-fill: white;
+    -fx-max-width: infinity;
+    -fx-alignment: center;
+}

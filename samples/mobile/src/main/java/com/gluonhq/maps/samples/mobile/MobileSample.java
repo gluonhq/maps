@@ -38,9 +38,10 @@ import javafx.application.Application;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.Screen;
@@ -71,24 +72,51 @@ public class MobileSample extends Application {
         view.addLayer(positionLayer());
         view.setZoom(3);
         Scene scene;
+        final Label headerLabel = headerLabel();
+        final Group copyright = createCopyright();
+        StackPane bp = new StackPane() {
+            @Override
+            protected void layoutChildren() {
+                super.layoutChildren();
+                headerLabel.setLayoutY(0.0);
+                copyright.setLayoutX(getWidth() - copyright.prefWidth(-1));
+                copyright.setLayoutY(getHeight() - copyright.prefHeight(-1));
+            }
+        };
+        bp.getChildren().addAll(view, headerLabel, copyright);
         if (Platform.isDesktop()) {
-            scene = new Scene(view, 600, 700);
+            headerLabel.setManaged(false);
+            headerLabel.setVisible(false);
+            scene = new Scene(bp, 600, 700);
             stage.setTitle("Gluon Maps Demo");
-        } else {
-            BorderPane bp = new BorderPane();
-            bp.setCenter(view);
-            final Label label = new Label("Gluon Maps Demo");
-            label.setAlignment(Pos.CENTER);
-            label.setMaxWidth(Double.MAX_VALUE);
-            label.setStyle("-fx-background-color: dimgrey; -fx-text-fill: white;");
-            bp.setTop(label);
+       } else {
+            headerLabel.setManaged(true);
+            headerLabel.setVisible(true);
             Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
             scene = new Scene(bp, bounds.getWidth(), bounds.getHeight());
         }
+        scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
         stage.setScene(scene);
         stage.show();
 
         view.flyTo(1., mapPoint, 2.);
+    }
+
+    private Label headerLabel() {
+        final Label header = new Label("Gluon Maps Demo");
+        header.getStyleClass().add("header");
+        return header;
+    }
+
+    private Group createCopyright() {
+        final Label copyright = new Label(
+                "Map data © OpenStreetMap contributors, CC-BY-SA.\n" +
+                "Imagery  © OpenStreetMap, for demo only."
+        );
+        copyright.getStyleClass().add("copyright");
+        copyright.setAlignment(Pos.CENTER);
+        copyright.setMaxWidth(Double.MAX_VALUE);
+        return new Group(copyright);
     }
 
     private MapLayer positionLayer() {
