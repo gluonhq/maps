@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, Gluon
+ * Copyright (c) 2020, 2022, Gluon
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@ package com.gluonhq.impl.maps;
 
 import com.gluonhq.maps.tile.TileRetriever;
 import com.gluonhq.maps.tile.TileRetrieverProvider;
+import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.beans.property.ReadOnlyDoubleProperty;
@@ -67,9 +68,11 @@ public class TileImageView extends ImageView {
                 return image;
             }).thenAccept(file -> {
                 logger.fine("Tile from downloaded file " + zoom + "/" + i + "/" + j);
-                downloading.setValue(false);
-                setImage(file);
-                setProgress(1);
+                Platform.runLater(() -> {
+                    downloading.setValue(false);
+                    setImage(file);
+                    setProgress(1);
+                });
             });
         } else {
             logger.fine("Tile from file cache");
