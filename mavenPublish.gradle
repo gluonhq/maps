@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2021, Gluon
+ * Copyright (c) 2016, 2022, Gluon
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,24 +76,18 @@ publishing {
             }
         }
     }
-    repositories {
-        maven {
-            def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-            def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
-            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
-            def sonatypeUsername = project.hasProperty('sonatypeUsername') ? project.getProperty('sonatypeUsername') : null
-            def sonatypePassword = project.hasProperty('sonatypePassword') ? project.getProperty('sonatypePassword') : null
-            if (sonatypeUsername != null && sonatypePassword != null) {
-                credentials {
-                    username sonatypeUsername
-                    password sonatypePassword
-                }
-            }
-        }
-    }
 }
 
 signing {
     required = { gradle.taskGraph.hasTask('publishing') && !version.endsWith("SNAPSHOT") }
     sign publishing.publications.mavenJava
+}
+
+nexusPublishing {
+    repositories {
+        sonatype {
+            username = project.hasProperty('sonatypeUsername') ? project.property('sonatypeUsername') : ''
+            password = project.hasProperty('sonatypePassword') ? project.property('sonatypePassword') : ''
+        }
+    }
 }
