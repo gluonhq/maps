@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, 2021, Gluon
+ * Copyright (c) 2018, 2023, Gluon
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.gluonhq.maps.samples.mobile;
+package com.gluonhq.maps.samples;
 
 import com.gluonhq.attach.position.Position;
 import com.gluonhq.attach.position.PositionService;
