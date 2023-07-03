@@ -28,7 +28,7 @@ jobs:
 
       - name: Build project
         run: |
-          ./mvnw verify
+          ./mvnw -B -ntp verify
 
       - name: Publish Snapshots
         if: github.ref == 'refs/heads/master'
