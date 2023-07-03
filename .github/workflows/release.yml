@@ -30,13 +30,10 @@ jobs:
           git config --global user.name "Gluon Bot"
           git config --global user.email "githubbot@gluonhq.com"
 
-      - name: Grant execute permission for maven wrapper
-        run: chmod +x mvnw
-
       - name: Publish to Maven Central
         id: deploy
         run: |
-          ./mvnw -B -ntp -Prelease deploy -pl '!samples'
+          mvn -B -ntp -Prelease deploy -f maps
           echo ::set-output name=exit_code::$?
         env:
           MAVEN_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
@@ -56,8 +53,8 @@ jobs:
           TAG=${GITHUB_REF/refs\/tags\//}
           NEW_PROJECT_VERSION=${TAG%.*}.$((${TAG##*.} + 1))
           echo "Update project version to next snapshot version"
-          ./mvnw versions:set -DnewVersion=$NEW_PROJECT_VERSION-SNAPSHOT -DgenerateBackupPoms=false
-          git commit pom.xml -m "Prepare development of $NEW_PROJECT_VERSION"
+          mvn versions:set -DnewVersion=$NEW_PROJECT_VERSION-SNAPSHOT -DgenerateBackupPoms=false -f maps
+          git commit maps/pom.xml -m "Prepare development of $NEW_PROJECT_VERSION"
           git push https://gluon-bot:$PAT@github.com/$GITHUB_REPOSITORY HEAD:main
         shell: bash
         env:

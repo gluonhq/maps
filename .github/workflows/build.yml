@@ -23,19 +23,16 @@ jobs:
           server-username: MAVEN_USERNAME
           server-password: MAVEN_CENTRAL_TOKEN
 
-      - name: Grant execute permission for maven wrapper
-        run: chmod +x mvnw
-
       - name: Build project
         run: |
-          ./mvnw -B -ntp verify
+          mvn -B -ntp verify -f maps
 
       - name: Publish Snapshots
         if: github.ref == 'refs/heads/master'
         run: |
           ver=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
           if [[ $ver == *"SNAPSHOT"* ]]; then
-              mvn -B -ntp deploy -pl '!samples'
+              mvn -B -ntp deploy -f maps
           fi
         shell: bash
         env:
