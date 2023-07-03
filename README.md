@@ -9,26 +9,26 @@ It is blazing fast and offers layer overlays, multiple tile-sets, and much more.
 
 ## Build
 
-The project can be build using the gradle command:
+The project can be build using the following command:
 
 ```
-./gradlew build
+./mvnw verify
 ```
 
 Build and install the jar to local maven repository:
 
 ```
-./gradlew publishToMavenLocal
+./mvnw install
 ```
 
 ## Sample
 
-A [sample](https://github.com/gluonhq/maps/tree/master/samples/mobile) is provided in the repository to get started with the library.
+A [sample](https://github.com/gluonhq/maps/tree/master/samples/) is provided in the repository to get started with the library.
 
 To run the sample:
 
 ```
-./gradlew run
+./mvnw javafx:run -f samples
 ```
 
 ## Contribution
