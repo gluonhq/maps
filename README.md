@@ -6,7 +6,7 @@
 
 # Gluon Maps
 
-Gluon Maps provides an easy way to integrate [OpenStreetMaps](https://www.openstreetmap.org) into a Java application.
+Gluon Maps provides an easy way to integrate [OpenStreetMaps](https://www.openstreetmap.org) into a JavaFX application.
 It is blazing fast and offers layer overlays, multiple tile-sets, and much more.
 
 ## Build
