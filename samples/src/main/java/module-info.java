@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Gluon
+ * Copyright (c) 2018, 2023, Gluon
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,37 +25,13 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+module com.gluonhq.maps.sample {
+    requires javafx.controls;
+    requires com.gluonhq.maps;
+    requires com.gluonhq.attach.position;
+    requires com.gluonhq.attach.lifecycle;
+    requires com.gluonhq.attach.util;
+    requires java.logging;
 
-import java.text.SimpleDateFormat
-
-Date buildTimeAndDate = new Date()
-ext {
-    buildBy = System.properties['user.name']
-    buildDate = new SimpleDateFormat('yyyy-MM-dd').format(buildTimeAndDate)
-    buildTime = new SimpleDateFormat('HH:mm:ss.SSSZ').format(buildTimeAndDate)
-    buildRevision = versioning.info.commit
-    buildCreatedBy = "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})".toString()
-}
-
-jar {
-    manifest {
-        attributes(
-            'Built-By': buildBy,
-            'Created-By': buildCreatedBy,
-            'Build-Date': buildDate,
-            'Build-Time': buildTime,
-            'Build-Revision': buildRevision,
-            'Specification-Title': project.name,
-            'Specification-Version': project.version,
-            'Specification-Vendor': 'gluonhq.com',
-            'Implementation-Title': project.name,
-            'Implementation-Version': project.version,
-            'Implementation-Vendor': 'gluonhq.com'
-        )
-    }
-
-    metaInf {
-        from rootProject.file('.')
-        include 'LICENSE'
-    }
+    exports com.gluonhq.maps.samples;
 }
