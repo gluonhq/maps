@@ -27,7 +27,7 @@ jobs:
           mvn -B -ntp verify -f maps
 
       - name: Publish Snapshots
-        if: github.ref == 'refs/heads/master'
+        if: github.ref == 'refs/heads/main'
         run: |
           ver=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
           if [[ $ver == *"SNAPSHOT"* ]]; then
