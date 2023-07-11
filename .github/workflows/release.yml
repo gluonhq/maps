@@ -21,10 +21,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          fetch-depth: 5
-          persist-credentials: false
+          ref: ${{ needs.pre-release.outputs.tag }}
 
-      - name: Setup Java 11
+      - name: Setup Java
         uses: actions/setup-java@v3
         with:
           java-version: 17
