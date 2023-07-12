@@ -27,32 +27,32 @@ Run the native image app:
 
 Build a native image for Android using:
 
-    mvn gluonfx:build -Ptarget=android
+    mvn gluonfx:build -Pandroid
 
 Package the native image as an 'apk' file:
 
-    mvn gluonfx:package -Ptarget=android
+    mvn gluonfx:package -Pandroid
 
 Install it on a connected android device:
 
-    mvn gluonfx:install -Ptarget=android
+    mvn gluonfx:install -Pandroid
 
 Run the installed app on a connected android device:
 
-    mvn gluonfx:nativerun -Ptarget=android
+    mvn gluonfx:nativerun -Pandroid
 
 ### iOS
 
 Build a native image for iOS using:
 
-    mvn gluonfx:build -Ptarget=ios
+    mvn gluonfx:build -Pios
 
 Install and run the native image on a connected iOS device:
 
-    mvn gluonfx:nativeRun -Ptarget=ios
+    mvn gluonfx:nativeRun -Pios
 
 Create an IPA file (for submission to TestFlight or App Store):
 
-    mvn gluonfx:package -Ptarget=ios
+    mvn gluonfx:package -Pios
 
 

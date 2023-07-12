@@ -23,7 +23,7 @@ MapPoint point = new MapPoint(latitude, longitude);
 Shows the map tiles along with any user defined nodes.
 This class can be extended by overloading the `layoutLayer` method.
 
-`The following code snippet shows how to create a custom layer that displays red circles at the given map points:
+The following code snippet shows how to create a custom layer that displays red circles at the given map points:
 
 ```
 public class CustomMapLayer extends MapLayer {
