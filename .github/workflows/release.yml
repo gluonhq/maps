@@ -16,6 +16,7 @@ jobs:
       depDirectory: samples
 
   release:
+    needs: pre-release
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
