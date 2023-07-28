@@ -61,7 +61,7 @@ Maven:
 ```
 <dependency>
     <groupId>com.gluonhq</groupId>
-    <artifactId>emoji</artifactId>
+    <artifactId>maps</artifactId>
     <version>${version}</version>
 </dependency>
 ```
@@ -69,7 +69,7 @@ Maven:
 Gradle:
 ```
 dependencies {
-    implementation 'com.gluonhq:emoji:${version}'
+    implementation 'com.gluonhq:maps:${version}'
 }
 ```
 
