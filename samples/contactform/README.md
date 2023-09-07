@@ -4,6 +4,6 @@ This sample demonstrates how to pin a location on Gluon Maps inside a contact fo
 
 ## Instructions
 
-To run the application, simply execute the following command from the `contactform` directory:
+To run the application, simply execute the following command from the `samples/contactform` directory:
 
     mvn javafx:run
