@@ -4,6 +4,7 @@
 [![Maven Central](https://img.shields.io/maven-central/v/com.gluonhq/maps)](https://search.maven.org/#search|ga|1|com.gluonhq.maps)
 [![License](https://img.shields.io/github/license/gluonhq/maps)](https://opensource.org/licenses/GPL-3.0)
 [![javadoc](https://javadoc.io/badge2/com.gluonhq/maps/javadoc.svg)](https://javadoc.io/doc/com.gluonhq/maps)
+[![JFXCentral](https://img.shields.io/badge/Find_me_on-JFXCentral-blue?logo=googlechrome&logoColor=white)](https://www.jfx-central.com/libraries/gluonmaps)
 
 # Gluon Maps
 
