@@ -4,7 +4,7 @@ This sample demonstrates how to use Gluon Maps inside a JavaFX application.
 
 ## Instructions
 
-To run the application, simply execute the following command from the `samples` directory:
+To run the application, simply execute the following command from the `samples/mobile` directory:
 
     mvn javafx:run
 
