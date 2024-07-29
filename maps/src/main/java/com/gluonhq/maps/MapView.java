@@ -35,6 +35,8 @@ import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.beans.property.ReadOnlyDoubleProperty;
+import javafx.beans.property.ReadOnlyDoubleWrapper;
 import javafx.geometry.Point2D;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Region;
@@ -147,6 +149,14 @@ public class MapView extends Region {
      */
     public double getZoom() {
         return baseMap.getZoom();
+    }
+
+/**
+     * Returns the actual zoom level property of this map.
+     * @return the zoom level property.
+     */
+    public ReadOnlyDoubleProperty zoom() {
+        return baseMap.zoom();
     }
 
     /**
